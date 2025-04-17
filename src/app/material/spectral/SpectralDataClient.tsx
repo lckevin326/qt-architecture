@@ -219,10 +219,10 @@ export default function SpectralDataClient() {
             <table className={styles.dataTable}>
               <thead>
                 <tr>
-                  <th width="30%">波长 (μm)</th>
-                  <th width="30%">光谱反射率</th>
-                  <th width="30%">光谱发射率</th>
-                  <th width="10%">操作</th>
+                  <th style={{ width: '30%' }}>波长 (μm)</th>
+                  <th style={{ width: '30%' }}>光谱反射率</th>
+                  <th style={{ width: '30%' }}>光谱发射率</th>
+                  <th style={{ width: '10%' }}>操作</th>
                 </tr>
               </thead>
               <tbody>
