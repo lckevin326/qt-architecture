@@ -5,17 +5,27 @@ import { useRouter } from 'next/navigation';
 import LayerTree from '@/components/psd/LayerTree';
 import styles from './page.module.css';
 
+// 确保在文件顶部添加 LayerItem 接口定义
+interface LayerItem {
+  id: number;
+  name: string;
+  type: string;
+  visible: boolean;
+  linked: boolean;
+  children?: LayerItem[];
+}
+
 // 保持原有的 MOCK_LAYERS 和 MOCK_MATERIALS 数据不变
 const MOCK_LAYERS = [
-  { id: 1, name: '背景', type: 'background', visible: true },
-  { id: 2, name: '建筑主体', type: 'layer', visible: true },
-  { id: 3, name: '窗户', type: 'group', visible: true, 
+  { id: 1, name: '背景', type: 'background', visible: true, linked: false },
+  { id: 2, name: '建筑主体', type: 'layer', visible: true, linked: true },
+  { id: 3, name: '窗户', type: 'group', visible: true, linked: false,
     children: [
-      { id: 4, name: '窗户-玻璃', type: 'layer', visible: true },
-      { id: 5, name: '窗户-框架', type: 'layer', visible: true }
+      { id: 4, name: '窗户-玻璃', type: 'layer', visible: true, linked: true },
+      { id: 5, name: '窗户-框架', type: 'layer', visible: true, linked: true }
     ]
   },
-  { id: 6, name: '外墙装饰', type: 'layer', visible: true }
+  { id: 6, name: '外墙装饰', type: 'layer', visible: true, linked: false }
 ];
 
 const MOCK_MATERIALS = [
@@ -402,6 +412,7 @@ export default function PSDProcessPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+
 
 
 
