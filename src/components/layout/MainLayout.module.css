@@ -85,12 +85,32 @@
 .treeItem {
   padding: 6px 12px;
   cursor: pointer;
-  border-radius: 2px;
-  margin: 2px 0;
+  display: flex;
+  align-items: center;
 }
 
 .treeItem:hover {
   background-color: var(--qt-menu-hover);
+}
+
+.treeItemGroup {
+  margin: 8px 0;
+}
+
+.treeItemGroupTitle {
+  padding: 6px 12px;
+  color: var(--qt-text-color);
+  font-weight: 500;
+}
+
+.treeItemChildren {
+  /* 调整子菜单的缩进，与其他菜单项保持一致的左对齐 */
+  padding-left: 24px;
+}
+
+.treeItemChildren .treeItem {
+  /* 确保子菜单项的内边距与其他菜单项一致 */
+  padding: 6px 12px;
 }
 
 /* 内容区域 */
@@ -128,3 +148,4 @@
   margin: 0 8px;
   color: var(--qt-border-color);
 }
+

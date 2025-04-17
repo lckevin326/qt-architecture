@@ -1,58 +1,49 @@
 .sidebar {
-  width: 200px;
+  width: 220px;
   background-color: var(--qt-control-bg);
   border-right: 1px solid var(--qt-border-color);
-  user-select: none;
+  flex-shrink: 0;
   overflow-y: auto;
 }
 
-.menuItem {
-  display: flex;
-  flex-direction: column;
+.menuList {
+  padding: 4px;
 }
 
-.menuHeader {
+.menuItem, .menuGroup, .submenuItem {
+  padding: 6px 8px;
+  margin: 2px 0;
+  border-radius: 2px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  padding: 8px 12px;
-  cursor: pointer;
-  gap: 8px;
+  font-size: 13px;
 }
 
-.menuHeader:hover {
+.menuItem:hover, .submenuItem:hover {
   background-color: var(--qt-menu-hover);
 }
 
-.menuHeader.active {
-  background-color: var(--qt-highlight-light);
-  color: var(--qt-highlight-color);
+.menuGroup {
+  color: var(--qt-text-light);
+  font-weight: 500;
 }
 
-.icon {
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.submenu {
+.submenuList {
   padding-left: 24px;
 }
 
 .submenuItem {
-  display: flex;
-  align-items: center;
-  padding: 6px 12px;
-  cursor: pointer;
-  gap: 8px;
+  padding: 4px 8px;
 }
 
-.submenuItem:hover {
-  background-color: var(--qt-menu-hover);
+.menuIcon {
+  margin-right: 8px;
+  font-size: 14px;
 }
 
-.submenuItem.active {
-  background-color: var(--qt-highlight-light);
+.active {
+  background-color: var(--qt-menu-selected);
   color: var(--qt-highlight-color);
 }
+

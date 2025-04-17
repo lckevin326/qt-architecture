@@ -36,7 +36,32 @@ export default function Sidebar() {
       id: 'psd',
       icon: '📁',
       label: 'PSD处理',
-      path: '/psd/list'  // 确保这里的路径是 /psd/list
+      path: '/psd/list'
+    },
+    {
+      id: 'system',
+      icon: '⚙️',
+      label: '系统管理',
+      children: [
+        {
+          id: 'user-management',
+          icon: '👤',
+          label: '用户管理',
+          path: '/system/users'
+        },
+        {
+          id: 'permission-settings',
+          icon: '🔒',
+          label: '权限设置',
+          path: '/system/permissions'
+        },
+        {
+          id: 'system-settings',
+          icon: '⚙️',
+          label: '系统设置',
+          path: '/system/settings'
+        }
+      ]
     }
   ];
 
@@ -46,21 +71,46 @@ export default function Sidebar() {
 
   return (
     <div className={styles.sidebar}>
-      {menuItems.map((item) => (
-        <div 
-          key={item.id} 
-          className={`${styles.menuItem} ${pathname === item.path ? styles.active : ''}`}
-          onClick={() => handleMenuClick(item.path)}
-        >
-          <span className={styles.icon}>{item.icon}</span>
-          <span>{item.label}</span>
-        </div>
-      ))}
+      <div className={styles.menuList}>
+        {menuItems.map((item) => (
+          <div key={item.id}>
+            {!item.children ? (
+              <div
+                className={`${styles.menuItem} ${
+                  pathname === item.path ? styles.active : ''
+                }`}
+                onClick={() => handleMenuClick(item.path)}
+              >
+                <span className={styles.menuIcon}>{item.icon}</span>
+                <span className={styles.menuLabel}>{item.label}</span>
+              </div>
+            ) : (
+              <>
+                <div className={styles.menuGroup}>
+                  <span className={styles.menuIcon}>{item.icon}</span>
+                  <span className={styles.menuLabel}>{item.label}</span>
+                </div>
+                <div className={styles.submenuList}>
+                  {item.children.map((subItem) => (
+                    <div
+                      key={subItem.id}
+                      className={`${styles.submenuItem} ${
+                        pathname === subItem.path ? styles.active : ''
+                      }`}
+                      onClick={() => handleMenuClick(subItem.path)}
+                    >
+                      <span className={styles.menuIcon}>{subItem.icon}</span>
+                      <span className={styles.menuLabel}>{subItem.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
-
-
-
 
 

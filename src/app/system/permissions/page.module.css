@@ -1,0 +1,361 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--qt-bg-color);
+}
+
+/* 菜单栏样式 */
+.menuBar {
+  background-color: var(--qt-control-bg);
+  border-bottom: 1px solid var(--qt-border-color);
+  padding: 2px 0;
+  display: flex;
+  align-items: center;
+}
+
+.menuItem {
+  padding: 4px 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.menuItem:hover {
+  background-color: var(--qt-menu-hover);
+  border: 1px solid var(--qt-border-color);
+}
+
+/* 工具栏样式 */
+.toolbar {
+  background-color: var(--qt-control-bg);
+  border-bottom: 1px solid var(--qt-border-color);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolButton {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border: 1px solid var(--qt-border-color);
+  background-color: var(--qt-control-bg);
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.toolButton:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.toolButton:active {
+  background-color: var(--qt-highlight-light);
+}
+
+.toolButtonIcon {
+  margin-right: 4px;
+  font-size: 12px;
+}
+
+/* 主内容区域 */
+.mainContent {
+  display: flex;
+  flex: 1;
+  padding: 8px;
+  gap: 8px;
+  overflow: hidden;
+}
+
+/* 左侧面板 */
+.leftPanel {
+  width: 240px;
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.roleList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.roleItem {
+  padding: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--qt-border-color);
+}
+
+.roleItem:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.roleItem.active {
+  background-color: var(--qt-highlight-light);
+}
+
+.roleName {
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.roleUserCount {
+  font-size: 11px;
+  background-color: var(--qt-highlight-light);
+  color: var(--qt-highlight-color);
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+.roleDesc {
+  font-size: 11px;
+  color: var(--qt-text-light);
+}
+
+/* 右侧面板 */
+.rightPanel {
+  flex: 1;
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 选项卡样式 */
+.tabs {
+  display: flex;
+  background-color: var(--qt-bg-color);
+  border-bottom: 1px solid var(--qt-border-color);
+}
+
+.tab {
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  margin-bottom: -1px;
+  font-size: 12px;
+}
+
+.tab:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.tab.active {
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  border-bottom-color: var(--qt-control-bg);
+}
+
+/* 表单控件样式 */
+.formGroup {
+  margin-bottom: 12px;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--qt-border-color);
+  background-color: var(--qt-control-bg);
+  font-size: 12px;
+}
+
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  border-color: var(--qt-highlight-color);
+  outline: none;
+}
+
+.formTextarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+/* 开关样式 */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 16px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--qt-text-disabled);
+  transition: .2s;
+  border-radius: 16px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .2s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--qt-highlight-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(16px);
+}
+
+/* 状态栏样式 */
+.statusBar {
+  background-color: var(--qt-control-bg);
+  border-top: 1px solid var(--qt-border-color);
+  padding: 2px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--qt-text-light);
+}
+
+/* 内容区域样式 */
+.contentSection {
+  padding: 8px;
+  overflow-y: auto;
+}
+
+/* 权限卡片样式 */
+.permissionCard {
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  margin-bottom: 8px;
+}
+
+.permissionCardHeader {
+  padding: 8px;
+  background-color: var(--qt-bg-color);
+  border-bottom: 1px solid var(--qt-border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.permissionCardTitle {
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.permissionCardBody {
+  padding: 8px;
+}
+
+/* 左侧菜单样式补充 */
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: var(--qt-text-color);
+  text-decoration: none;
+}
+
+.menuItem:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.menuItem.active {
+  background-color: var(--qt-menu-selected);
+}
+
+.menuIcon {
+  margin-right: 8px;
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+.submenu {
+  margin-left: 24px;
+}
+
+.expandIcon {
+  margin-right: 4px;
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+
+.expanded .expandIcon {
+  transform: rotate(90deg);
+}
+
+/* 数据权限开关样式 */
+.scopeSwitch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.scopeLabel {
+  font-size: 13px;
+  color: var(--qt-text-color);
+}
+
+/* 数据范围说明文本样式 */
+.scopeDescription {
+  font-size: 12px;
+  color: var(--qt-text-light);
+  margin-bottom: 16px;
+  padding: 8px;
+  background-color: var(--qt-control-bg);
+  border-radius: 4px;
+}
+
+/* 保存按钮样式 */
+.saveButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--qt-highlight-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.saveButton:hover {
+  opacity: 0.9;
+}
+
+.buttonIcon {
+  font-size: 14px;
+}
+
+

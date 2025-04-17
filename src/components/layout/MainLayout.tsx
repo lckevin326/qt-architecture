@@ -56,6 +56,26 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             <div className={styles.treeItem} onClick={() => router.push('/psd/list')}>
               PSD处理
             </div>
+            {/* 系统管理菜单组 */}
+            <div className={styles.treeItemGroup}>
+              <div className={styles.treeItemGroupTitle}>
+                系统管理
+              </div>
+              <div className={styles.treeItemChildren}>
+                <div 
+                  className={styles.treeItem} 
+                  onClick={() => router.push('/system/users')}
+                >
+                  用户管理
+                </div>
+                <div 
+                  className={styles.treeItem} 
+                  onClick={() => router.push('/system/permissions')}
+                >
+                  权限设置
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -82,6 +102,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     </div>
   );
 }
+
+
 
 
 
