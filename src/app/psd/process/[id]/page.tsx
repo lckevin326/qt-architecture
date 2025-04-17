@@ -9,14 +9,14 @@ import styles from './page.module.css';
 interface LayerItem {
   id: number;
   name: string;
-  type: string;
+  type: 'layer' | 'group' | 'background';  // 限制类型为这三个值之一
   visible: boolean;
   linked: boolean;
   children?: LayerItem[];
 }
 
 // 保持原有的 MOCK_LAYERS 和 MOCK_MATERIALS 数据不变
-const MOCK_LAYERS = [
+const MOCK_LAYERS: LayerItem[] = [
   { id: 1, name: '背景', type: 'background', visible: true, linked: false },
   { id: 2, name: '建筑主体', type: 'layer', visible: true, linked: true },
   { id: 3, name: '窗户', type: 'group', visible: true, linked: false,
@@ -412,6 +412,7 @@ export default function PSDProcessPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+
 
 
 
