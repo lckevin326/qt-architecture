@@ -15,8 +15,8 @@ interface Material {
 // 定义光谱数据的接口
 interface SpectralDataPoint {
   wavelength: number;
-  intensity: number;
-  // 添加其他必要的字段
+  reflectivity: number;
+  emissivity: number;
 }
 
 // 静态材质列表数据
