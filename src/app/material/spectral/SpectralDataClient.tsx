@@ -12,6 +12,13 @@ interface Material {
   dataPoints: number | 'calculated';  // 可以是数字或字符串 'calculated'
 }
 
+// 定义光谱数据的接口
+interface SpectralDataPoint {
+  wavelength: number;
+  intensity: number;
+  // 添加其他必要的字段
+}
+
 // 静态材质列表数据
 const MATERIALS: Material[] = [
   {
@@ -84,7 +91,11 @@ export default function SpectralDataClient() {
   };
 
   // 处理数据变化
-  const handleSpectralDataChange = (index, field, value) => {
+  const handleSpectralDataChange = (
+    index: number,
+    field: keyof SpectralDataPoint,
+    value: number
+  ) => {
     const newData = [...spectralData];
     newData[index] = {
       ...newData[index],
