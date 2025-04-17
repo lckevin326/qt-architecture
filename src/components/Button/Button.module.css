@@ -1,0 +1,13 @@
+.button {
+  composes: qtButton from '../../styles/qt.css';
+}
+
+.primary {
+  background-color: var(--qt-highlight-color);
+  color: white;
+}
+
+.secondary {
+  background-color: var(--qt-control-bg);
+  color: var(--qt-text-color);
+}

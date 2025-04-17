@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>材质管理器系统</title>
+    <style>
+        :root {
+            /* QT风格配色 - 更加中性和保守 */
+            --qt-bg-color: #f5f5f5;
+            --qt-control-bg: #ffffff;
+            --qt-highlight-color: #0078d7;
+            --qt-highlight-light: #e5f1fb;
+            --qt-text-color: #202020;
+            --qt-text-light: #505050;
+            --qt-border-color: #d0d0d0;
+            --qt-menu-hover: #e5e5e5;
+            --qt-success-color: #2ecc71;
+            --qt-warning-color: #f39c12;
+            --qt-danger-color: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--qt-bg-color);
+            color: var(--qt-text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-size: 13px; /* QT应用通常使用较小的字体 */
+        }
+        
+        /* 菜单栏 */
+        .menu-bar {
+            background-color: var(--qt-control-bg);
+            color: var(--qt-text-color);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 2px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-item {
+            padding: 4px 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--qt-menu-hover);
+            border: 1px solid var(--qt-border-color);
+        }
+        
+        /* 工具栏 */
+        .toolbar {
+            background-color: var(--qt-control-bg);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toolbar-btn {
+            padding: 3px 8px;
+            margin-right: 4px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toolbar-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .toolbar-btn-icon {
+            margin-right: 4px;
+            font-size: 14px;
+        }
+        
+        .toolbar-separator {
+            width: 1px;
+            height: 18px;
+            background-color: var(--qt-border-color);
+            margin: 0 8px;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* 左侧边栏菜单 - QT风格 */
+        .sidebar {
+            width: 220px;
+            background-color: var(--qt-control-bg);
+            border-right: 1px solid var(--qt-border-color);
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        
+        .tree-menu {
+            padding: 4px;
+        }
+        
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 3px 8px;
+            cursor: pointer;
+        }
+        
+        .tree-item:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .tree-item.active {
+            background-color: var(--qt-highlight-light);
+            color: var(--qt-highlight-color);
+            font-weight: bold;
+        }
+        
+        .tree-expand-icon {
+            margin-right: 4px;
+            font-size: 10px;
+            width: 10px;
+        }
+        
+        .tree-icon {
+            margin-right: 4px;
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .tree-children {
+            margin-left: 16px;
+        }
+        
+        /* 右侧内容区 */
+        .content-area {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+        }
+        
+        .welcome-section {
+            margin-bottom: 16px;
+        }
+        
+        .welcome-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: var(--qt-text-color);
+        }
+        
+        .date-text {
+            color: var(--qt-text-light);
+            font-size: 12px;
+        }
+        
+        /* 搜索栏 - QT风格 */
+        .search-container {
+            margin-bottom: 16px;
+            display: flex;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 4px 8px;
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            outline: none;
+            font-size: 13px;
+        }
+        
+        .search-input:focus {
+            border-color: var(--qt-highlight-color);
+        }
+        
+        .search-btn {
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-left: none;
+            border-radius: 0 2px 2px 0;
+            padding: 0 8px;
+            cursor: pointer;
+        }
+        
+        .search-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        /* 模块网格 - QT风格更方正的卡片 */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .module-card {
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .module-card:hover {
+            border-color: var(--qt-highlight-color);
+        }
+        
+        .module-header {
+            padding: 8px;
+            background-color: var(--qt-highlight-light);
+            border-bottom: 1px solid var(--qt-border-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .module-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--qt-highlight-color);
+            color: white;
+            border-radius: 2px;
+            font-size: 14px;
+        }
+        
+        .module-title {
+            font-weight: bold;
+            font-size: 13px;
+            color: var(--qt-text-color);
+        }
+        
+        .module-content {
+            padding: 8px;
+            min-height: 80px;
+        }
+        
+        .module-description {
+            color: var(--qt-text-light);
+            margin-bottom: 8px;
+            line-height: 1.4;
+            font-size: 12px;
+        }
+        
+        .module-action {
+            text-align: right;
+        }
+        
+        .module-button {
+            padding: 3px 8px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .module-button:hover {
+            background-color: var(--qt-menu-hover);
+            border-color: var(--qt-highlight-color);
+        }
+        
+        /* 活动列表 - QT风格 */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--qt-border-color);
+            padding-bottom: 5px;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .view-all {
+            color: var(--qt-highlight-color);
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .view-all:hover {
+            text-decoration: underline;
+        }
+        
+        .activity-list {
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+        }
+        
+        .activity-item {
+            display: flex;
+            padding: 8px;
+            border-bottom: 1px solid var(--qt-border-color);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-item:hover {
+            background-color: var(--qt-highlight-light);
+        }
+        
+        .activity-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 2px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            color: white;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon.edit {
+            background-color: var(--qt-highlight-color);
+        }
+        
+        .activity-icon.create {
+            background-color: var(--qt-success-color);
+        }
+        
+        .activity-icon.calculate {
+            background-color: var(--qt-warning-color);
+        }
+        
+        .activity-icon.export {
+            background-color: var(--qt-danger-color);
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-text {
+            line-height: 1.4;
+            font-size: 12px;
+        }
+        
+        .activity-name {
+            color: var(--qt-highlight-color);
+            font-weight: bold;
+        }
+        
+        .activity-time {
+            color: var(--qt-text-light);
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        
+        /* 状态栏 - QT风格 */
+        .status-bar {
+            background-color: var(--qt-control-bg);
+            border-top: 1px solid var(--qt-border-color);
+            padding: 2px 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--qt-text-light);
+        }
+        
+        .status-section {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-indicator.online {
+            background-color: var(--qt-success-color);
+        }
+        
+        .status-divider {
+            margin: 0 8px;
+            color: var(--qt-border-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 菜单栏 - QT风格 -->
+    <div class="menu-bar">
+        <div class="menu-item">文件</div>
+        <div class="menu-item">编辑</div>
+        <div class="menu-item">视图</div>
+        <div class="menu-item">工具</div>
+        <div class="menu-item">窗口</div>
+        <div class="menu-item">帮助</div>
+    </div>
+    
+    <!-- 工具栏 - QT风格 -->
+    <div class="toolbar">
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📁</span>
+            <span>打开</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">💾</span>
+            <span>保存</span>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📋</span>
+            <span>材质库</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">🖼️</span>
+            <span>导入PSD</span>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">⚙️</span>
+            <span>设置</span>
+        </button>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <!-- 左侧树形菜单 - QT风格 -->
+        <div class="sidebar">
+            <div class="tree-menu">
+                <div class="tree-item active">
+                    <span class="tree-icon">🏠</span>
+                    <span>首页</span>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">📋</span>
+                    <span>材质管理</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>基础材质</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>复合材质</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>光谱数据</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">📁</span>
+                    <span>PSD处理</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>导入PSD</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>图层管理</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>材质关联</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">⚙️</span>
+                    <span>计算与输出</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>计算参数</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>纹理生成</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>导出设置</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">👥</span>
+                    <span>系统管理</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>用户管理</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>权限设置</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>系统设置</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主要内容区域 - QT风格 -->
+        <div class="content-area">
+            <div class="welcome-section">
+                <h1 class="welcome-text">欢迎回来，管理员</h1>
+                <p class="date-text">2025年4月16日 星期三</p>
+            </div>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="搜索材质、文件或操作...">
+                <button class="search-btn">🔍</button>
+            </div>
+            
+            <!-- 模块卡片网格 - QT风格 -->
+            <div class="modules-grid">
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">📋</div>
+                        <h3 class="module-title">材质管理</h3>
+                    </div>
+                    <div class="module-content">
+                        <p class="module-description">管理基础材质和复合材质的物理属性，包括温度、发射率和光谱数据。</p>
+                        <div class="module-action">
+                            <button class="module-button">打开</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">📁</div>
+                        <h3 class="module-title">PSD处理</h3>
+                    </div>
+                    <div class="module-content">
+                        <p class="module-description">导入PSD文件，解析图层结构，并与材质库中的材质进行关联。</p>
+                        <div class="module-action">
+                            <button class="module-button">打开</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">⚙️</div>
+                        <h3 class="module-title">辐射计算</h3>
+                    </div>
+                    <div class="module-content">
+                        <p class="module-description">设置计算参数，执行辐射传输计算，实时监控计算进度。</p>
+                        <div class="module-action">
+                            <button class="module-button">打开</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">🔍</div>
+                        <h3 class="module-title">纹理输出</h3>
+                    </div>
+                    <div class="module-content">
+                        <p class="module-description">生成和导出温度纹理、分类纹理和发射率纹理，支持多种格式。</p>
+                        <div class="module-action">
+                            <button class="module-button">打开</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 最近活动 - QT风格 -->
+            <div class="section-header">
+                <div class="section-title">最近活动</div>
+                <a href="#" class="view-all">查看全部</a>
+            </div>
+            
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon edit">✏️</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            您编辑了基础材质 <span class="activity-name">铝合金A7075</span>
+                        </div>
+                        <div class="activity-time">10分钟前</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon create">➕</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            您创建了复合材质 <span class="activity-name">碳纤维复合板</span>
+                        </div>
+                        <div class="activity-time">1小时前</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon calculate">⚙️</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            为PSD文件 <span class="activity-name">城市场景.psd</span> 完成了辐射计算
+                        </div>
+                        <div class="activity-time">昨天 15:42</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon export">📤</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            导出了 <span class="activity-name">3</span> 个纹理文件
+                        </div>
+                        <div class="activity-time">昨天 16:05</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon create">➕</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            您创建了基础材质 <span class="activity-name">玻璃纤维</span>
+                        </div>
+                        <div class="activity-time">前天 09:27</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 状态栏 - QT风格 -->
+    <div class="status-bar">
+        <div class="status-section">
+            <div class="status-indicator online"></div>
+            <span>系统运行正常</span>
+            <span class="status-divider">|</span>
+            <span>数据库已连接</span>
+            <span class="status-divider">|</span>
+            <span>内存使用: 128MB</span>
+        </div>
+        <div class="status-section">
+            <span>材质管理器系统 v1.2.0</span>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,147 @@
+.pageContainer {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.pageTitle {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--qt-text-color);
+  margin: 0;
+}
+
+.breadcrumb {
+  font-size: 12px;
+  color: var(--qt-text-light);
+  margin-top: 4px;
+}
+
+.breadcrumbLink {
+  color: var(--qt-highlight-color);
+  cursor: pointer;
+}
+
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  margin: 0 8px;
+}
+
+.createButton {
+  padding: 6px 12px;
+  background-color: var(--qt-highlight-color);
+  color: white;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.buttonIcon {
+  font-size: 16px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.searchBox {
+  flex: 1;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+  font-size: 14px;
+}
+
+.filterSelect {
+  padding: 6px 12px;
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+  font-size: 14px;
+  min-width: 120px;
+}
+
+.materialTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.materialTable th,
+.materialTable td {
+  padding: 8px 12px;
+  border: 1px solid var(--qt-border-color);
+  text-align: left;
+}
+
+.materialTable th {
+  background-color: var(--qt-section-header);
+  font-weight: 500;
+}
+
+.materialTable tr:hover {
+  background-color: var(--qt-highlight-light);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionButton {
+  padding: 4px 8px;
+  font-size: 12px;
+  border: 1px solid var(--qt-border-color);
+  background-color: white;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.actionButton:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.pageButton {
+  padding: 4px 12px;
+  border: 1px solid var(--qt-border-color);
+  background-color: white;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.pageButton:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.pageInfo {
+  font-size: 14px;
+  color: var(--qt-text-light);
+}

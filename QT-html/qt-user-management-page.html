@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>材质管理器系统 - 用户管理</title>
+    <style>
+        :root {
+            /* QT风格配色 */
+            --qt-bg-color: #f5f5f5;
+            --qt-control-bg: #ffffff;
+            --qt-highlight-color: #0078d7;
+            --qt-highlight-light: #e5f1fb;
+            --qt-text-color: #202020;
+            --qt-text-light: #505050;
+            --qt-text-disabled: #a0a0a0;
+            --qt-border-color: #d0d0d0;
+            --qt-menu-hover: #e5e5e5;
+            --qt-success-color: #2ecc71;
+            --qt-warning-color: #f39c12;
+            --qt-danger-color: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            font-size: 13px;
+        }
+        
+        body {
+            background-color: var(--qt-bg-color);
+            color: var(--qt-text-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        /* 菜单栏 */
+        .menu-bar {
+            background-color: var(--qt-control-bg);
+            color: var(--qt-text-color);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 2px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-item {
+            padding: 4px 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--qt-menu-hover);
+            border: 1px solid var(--qt-border-color);
+        }
+        
+        /* 工具栏 */
+        .toolbar {
+            background-color: var(--qt-control-bg);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toolbar-btn {
+            padding: 3px 8px;
+            margin-right: 4px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toolbar-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .toolbar-btn-icon {
+            margin-right: 4px;
+            font-size: 14px;
+        }
+        
+        .toolbar-separator {
+            width: 1px;
+            height: 18px;
+            background-color: var(--qt-border-color);
+            margin: 0 8px;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        /* 左侧边栏菜单 - QT风格 */
+        .sidebar {
+            width: 220px;
+            background-color: var(--qt-control-bg);
+            border-right: 1px solid var(--qt-border-color);
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        
+        .tree-menu {
+            padding: 4px;
+        }
+        
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 3px 8px;
+            cursor: pointer;
+        }
+        
+        .tree-item:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .tree-item.active {
+            background-color: var(--qt-highlight-light);
+            color: var(--qt-highlight-color);
+            font-weight: bold;
+        }
+        
+        .tree-expand-icon {
+            margin-right: 4px;
+            font-size: 10px;
+            width: 10px;
+        }
+        
+        .tree-icon {
+            margin-right: 4px;
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .tree-children {
+            margin-left: 16px;
+        }
+        
+        /* 右侧内容区 */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* 标题和操作区 */
+        .content-header {
+            padding: 8px;
+            background-color: var(--qt-control-bg);
+            border-bottom: 1px solid var(--qt-border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .content-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 6px;
+        }
+        
+        /* 搜索和筛选区 */
+        .search-filter-bar {
+            padding: 8px;
+            background-color: var(--qt-control-bg);
+            border-bottom: 1px solid var(--qt-border-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            display: flex;
+            margin-right: 8px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 3px 6px;
+            border: 1px solid var(--qt-border-color);
+            border-right: none;
+            font-size: 12px;
+        }
+        
+        .search-btn {
+            padding: 3px 6px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            cursor: pointer;
+        }
+        
+        .search-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .filter-dropdown {
+            display: flex;
+        }
+        
+        .filter-btn {
+            padding: 3px 8px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .filter-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .filter-icon {
+            margin-right: 4px;
+        }
+        
+        /* 标签页控件 */
+        .tab-bar {
+            background-color: var(--qt-control-bg);
+            border-bottom: 1px solid var(--qt-border-color);
+            display: flex;
+        }
+        
+        .tab {
+            padding: 6px 12px;
+            border-right: 1px solid var(--qt-border-color);
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .tab:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .tab.active {
+            background-color: var(--qt-highlight-light);
+            font-weight: bold;
+            color: var(--qt-highlight-color);
+            border-bottom: 2px solid var(--qt-highlight-color);
+        }
+        
+        /* 表格容器 */
+        .table-container {
+            flex: 1;
+            overflow: auto;
+            background-color: var(--qt-control-bg);
+        }
+        
+        /* 用户表格 - QT风格 */
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .users-table th {
+            position: sticky;
+            top: 0;
+            background-color: var(--qt-bg-color);
+            color: var(--qt-text-color);
+            text-align: left;
+            padding: 6px 8px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--qt-border-color);
+            font-size: 12px;
+        }
+        
+        .users-table td {
+            padding: 4px 8px;
+            border-bottom: 1px solid var(--qt-border-color);
+            font-size: 12px;
+        }
+        
+        .users-table tr:hover {
+            background-color: var(--qt-highlight-light);
+        }
+        
+        .users-table tr.selected {
+            background-color: var(--qt-highlight-light);
+            color: var(--qt-highlight-color);
+        }
+        
+        /* 表格内容样式 */
+        .user-name {
+            font-weight: bold;
+            color: var(--qt-highlight-color);
+            cursor: pointer;
+        }
+        
+        .user-email {
+            color: var(--qt-text-light);
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        
+        /* 状态标签 */
+        .status-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 11px;
+            border-radius: 2px;
+            text-align: center;
+        }
+        
+        .status-active {
+            background-color: var(--qt-success-color);
+            color: white;
+        }
+        
+        .status-inactive {
+            background-color: var(--qt-danger-color);
+            color: white;
+        }
+        
+        .status-pending {
+            background-color: var(--qt-warning-color);
+            color: white;
+        }
+        
+        /* 角色标签 */
+        .role-badge {
+            display: inline-block;
+            padding: 1px 4px;
+            font-size: 10px;
+            background-color: var(--qt-bg-color);
+            border: 1px solid var(--qt-border-color);
+            margin-right: 2px;
+            margin-bottom: 2px;
+        }
+        
+        /* 表格操作按钮 */
+        .action-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 22px;
+            height: 22px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            cursor: pointer;
+            margin-right: 2px;
+            font-size: 11px;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .action-btn.edit:hover {
+            color: var(--qt-highlight-color);
+        }
+        
+        .action-btn.delete:hover {
+            color: var(--qt-danger-color);
+        }
+        
+        .action-btn.lock:hover {
+            color: var(--qt-warning-color);
+        }
+        
+        /* 分页控件 - QT风格 */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 8px;
+            background-color: var(--qt-control-bg);
+            border-top: 1px solid var(--qt-border-color);
+            font-size: 12px;
+        }
+        
+        .page-info {
+            color: var(--qt-text-light);
+        }
+        
+        .page-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .page-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--qt-border-color);
+            margin: 0 1px;
+            cursor: pointer;
+            background-color: var(--qt-control-bg);
+        }
+        
+        .page-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .page-btn.active {
+            background-color: var(--qt-highlight-color);
+            color: white;
+            border-color: var(--qt-highlight-color);
+        }
+        
+        .page-btn.disabled {
+            color: var(--qt-text-disabled);
+            cursor: default;
+        }
+        
+        /* 弹出窗口 - QT风格 */
+        .dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .dialog {
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            width: 400px;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .dialog-header {
+            padding: 8px;
+            background-color: var(--qt-bg-color);
+            border-bottom: 1px solid var(--qt-border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dialog-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .dialog-close {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+        }
+        
+        .dialog-body {
+            padding: 12px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .dialog-footer {
+            padding: 8px;
+            border-top: 1px solid var(--qt-border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+        
+        /* 表单控件 - QT风格 */
+        .form-group {
+            margin-bottom: 10px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 2px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .form-help {
+            font-size: 11px;
+            color: var(--qt-text-light);
+            margin-top: 2px;
+        }
+        
+        .form-input, 
+        .form-select, 
+        .form-textarea {
+            width: 100%;
+            padding: 3px 6px;
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-control-bg);
+            font-size: 12px;
+        }
+        
+        .form-input:focus, 
+        .form-select:focus, 
+        .form-textarea:focus {
+            border-color: var(--qt-highlight-color);
+        }
+        
+        .form-textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .form-checkbox input {
+            margin-right: 6px;
+        }
+        
+        /* 按钮 */
+        .btn {
+            padding: 3px 8px;
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-control-bg);
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .btn-primary {
+            background-color: var(--qt-highlight-color);
+            color: white;
+            border-color: var(--qt-highlight-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #0068c2;
+        }
+        
+        .btn-icon {
+            margin-right: 4px;
+            font-size: 12px;
+        }
+        
+        /* 状态栏 */
+        .status-bar {
+            background-color: var(--qt-control-bg);
+            border-top: 1px solid var(--qt-border-color);
+            padding: 2px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+        }
+        
+        .status-item {
+            margin-right: 12px;
+            color: var(--qt-text-light);
+        }
+        
+        .status-highlight {
+            color: var(--qt-highlight-color);
+            font-weight: bold;
+        }
+        
+        .status-separator {
+            margin: 0 8px;
+            color: var(--qt-border-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 菜单栏 - QT风格 -->
+    <div class="menu-bar">
+        <div class="menu-item">文件</div>
+        <div class="menu-item">编辑</div>
+        <div class="menu-item">视图</div>
+        <div class="menu-item">工具</div>
+        <div class="menu-item">窗口</div>
+        <div class="menu-item">帮助</div>
+    </div>
+    
+    <!-- 工具栏 - QT风格 -->
+    <div class="toolbar">
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">👤</span>
+            <span>新建用户</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">✏️</span>
+            <span>编辑</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">🗑️</span>
+            <span>删除</span>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">🔄</span>
+            <span>刷新</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📋</span>
+            <span>导出列表</span>
+        </button>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <!-- 左侧树形菜单 - QT风格 -->
+        <div class="sidebar">
+            <div class="tree-menu">
+                <div class="tree-item">
+                    <span class="tree-icon">🏠</span>
+                    <span>首页</span>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">📋</span>
+                    <span>材质管理</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>基础材质</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>复合材质</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>光谱数据</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">📁</span>
+                    <span>PSD处理</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>导入PSD</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>图层管理</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>材质关联</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">⚙️</span>
+                    <span>计算与输出</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>计算参数</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>纹理生成</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>导出设置</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▼</span>
+                    <span class="tree-icon">👥</span>
+                    <span>系统管理</span>
+                </div>
+                <div class="tree-children">
+                    <div class="tree-item active">
+                        <span class="tree-icon"></span>
+                        <span>用户管理</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>权限设置</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>系统设置</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="content-area">
+            <!-- 标题和操作区 -->
+            <div class="content-header">
+                <div class="content-title">用户管理</div>
+                <div class="header-actions">
+                    <button class="btn">
+                        <span class="btn-icon">📋</span>
+                        <span>导出用户列表</span>
+                    </button>
+                    <button class="btn-primary">
+                        <span class="btn-icon">➕</span>
+                        <span>添加用户</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 搜索和筛选区 -->
+            <div class="search-filter-bar">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索用户名称、电子邮箱或角色...">
+                    <button class="search-btn">🔍</button>
+                </div>
+                <div class="filter-dropdown">
+                    <button class="filter-btn">
+                        <span class="filter-icon">🔢</span>
+                        <span>状态筛选</span>
+                        <span>▼</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 标签页 -->
+            <div class="tab-bar">
+                <div class="tab active">用户列表</div>
+                <div class="tab">角色管理</div>
+                <div class="tab">访问日志</div>
+            </div>
+            
+            <!-- 用户表格容器 -->
+            <div class="table-container">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th width="3%">#</th>
+                            <th width="25%">用户信息</th>
+                            <th width="25%">角色</th>
+                            <th width="10%">状态</th>
+                            <th width="15%">最后登录</th>
+                            <th width="12%">创建时间</th>
+                            <th width="10%">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                <div class="user-name">管理员</div>
+                                <div class="user-email">admin@example.com</div>
+                            </td>
+                            <td>
+                                <span class="role-badge">系统管理员</span>
+                            </td>
+                            <td>
+                                <span class="status-badge status-active">活跃</span>
+                            </td>
+                            <td>2025-04-16 09:42</td>
+                            <td>2025-01-01</td>
+                            <td>
+                                <button class="action-btn edit" title="编辑用户">✏️</button>
+                                <button class="action-btn lock" title="锁定用户">🔒</button>
+                                <button class="action-btn" title="重置密码">🔑</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>
+                                <div class="user-name">张工程师</div>
+                                <div class="user-email">zhang@example.com</div>
+                            </td>
+                            <td>
+                                <span class="role-badge">工程师</span>
+                                <span class="role-badge">材质管理员</span>
+                            </td>
+                            <td>
+                                <span class="status-badge status-active">活跃</span>
+                            </td>
+                            <td>2025-04-15 16:22</td>
+                            <td>2025-02-15</td>
+                            <td>
+                                <button class="action-btn edit" title="编辑用户">✏️</button>
+                                <button class="action-btn lock" title="锁定用户">🔒</button>
+                                <button class="action-btn" title="重置密码">🔑</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>
+                                <div class="user-name">李研究员</div>
+                                <div class="user-email">li@example.com</div>
+                            </td>
+                            <td>
+                                <span class="role-badge">研究员</span>
+                            </td>
+                            <td>
+                                <span class="status-badge status-active">活跃</span>
+                            </td>
+                            <td>2025-04-14 14:05</td>
+                            <td>2025-03-10</td>
+                            <td>
+                                <button class="action-btn edit" title="编辑用户">✏️</button>
+                                <button class="action-btn lock" title="锁定用户">🔒</button>
+                                <button class="action-btn" title="重置密码">🔑</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>
+                                <div class="user-name">王分析师</div>
+                                <div class="user-email">wang@example.com</div>
+                            </td>
+                            <td>
+                                <span class="role-badge">分析师</span>
+                            </td>
+                            <td>
+                                <span class="status-badge status-inactive">已禁用</span>
+                            </td>
+                            <td>2025-03-28 10:42</td>
+                            <td>2025-03-15</td>
+                            <td>
+                                <button class="action-btn edit" title="编辑用户">✏️</button>
+                                <button class="action-btn lock" title="解锁用户">🔓</button>
+                                <button class="action-btn" title="重置密码">🔑</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>
+                                <div class="user-name">陈技术员</div>
+                                <div class="user-email">chen@example.com</div>
+                            </td>
+                            <td>
+                                <span class="role-badge">技术员</span>
+                            </td>
+                            <td>
+                                <span class="status-badge status-pending">待激活</span>
+                            </td>
+                            <td>-</td>
+                            <td>2025-04-10</td>
+                            <td>
+                                <button class="action-btn edit" title="编辑用户">✏️</button>
+                                <button class="action-btn delete" title="删除用户">🗑️</button>
+                                <button class="action-btn" title="重置密码">🔑</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 分页控件 -->
+            <div class="pagination">
+                <div class="page-info">
+                    显示 1-5 项，共 12 项
+                </div>
+                <div class="page-controls">
+                    <button class="page-btn disabled">◀</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">▶</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <div>
+            <span class="status-item">已选择: <span class="status-highlight">0</span> 项</span>
+            <span class="status-item">用户总数: 12</span>
+            <span class="status-item">活跃用户: 9</span>
+        </div>
+        <div>
+            <span class="status-item">材质管理器系统 v1.2.0</span>
+        </div>
+    </div>
+    
+    <!-- 添加用户弹出窗口 (隐藏状态) -->
+    <div class="dialog-overlay" style="display: none;">
+        <div class="dialog">
+            <div class="dialog-header">
+                <div class="dialog-title">添加新用户</div>
+                <button class="dialog-close">×</button>
+            </div>
+            <div class="dialog-body">
+                <div class="form-group">
+                    <label class="form-label" for="username">用户名</label>
+                    <input type="text" id="username" class="form-input" placeholder="输入用户名">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="fullname">姓名</label>
+                            <input type="text" id="fullname" class="form-input" placeholder="输入真实姓名">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="email">电子邮箱</label>
+                            <input type="email" id="email" class="form-input" placeholder="输入电子邮箱">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="password">初始密码</label>
+                            <input type="password" id="password" class="form-input" placeholder="输入初始密码">
+                            <div class="form-help">密码长度至少8位，包含大小写字母、数字和特殊字符</div>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="confirm-password">确认密码</label>
+                            <input type="password" id="confirm-password" class="form-input" placeholder="再次输入密码">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">分配角色</label>
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="role-engineer">
+                        <label for="role-engineer">工程师</label>
+                    </div>
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="role-researcher">
+                        <label for="role-researcher">研究员</label>
+                    </div>
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="role-analyst">
+                        <label for="role-analyst">分析师</label>
+                    </div>
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="role-material-admin">
+                        <label for="role-material-admin">材质管理员</label>
+                    </div>
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="role-technician">
+                        <label for="role-technician">技术员</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="status">状态</label>
+                    <select id="status" class="form-select">
+                        <option value="active">活跃</option>
+                        <option value="inactive">禁用</option>
+                        <option value="pending" selected>待激活</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="notes">备注</label>
+                    <textarea id="notes" class="form-textarea" placeholder="输入备注信息（可选）"></textarea>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn">取消</button>
+                <button class="btn-primary">创建用户</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

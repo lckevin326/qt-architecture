@@ -1,0 +1,119 @@
+.container {
+  padding: 24px;
+}
+
+.welcomeSection {
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.welcomeTitle {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: var(--qt-highlight-color);
+}
+
+.welcomeDesc {
+  color: var(--qt-text-light);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.quickAccessGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.quickAccessCard {
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  border-radius: 4px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quickAccessCard:hover {
+  border-color: var(--qt-highlight-color);
+  background-color: var(--qt-highlight-light);
+}
+
+.cardIcon {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--qt-highlight-color);
+}
+
+.cardDesc {
+  font-size: 13px;
+  color: var(--qt-text-light);
+  line-height: 1.4;
+}
+
+.recentSection {
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  border-radius: 4px;
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--qt-border-color);
+}
+
+.recentList {
+  display: grid;
+  gap: 12px;
+}
+
+.recentItem {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.recentItem:hover {
+  background-color: var(--qt-highlight-light);
+}
+
+.recentIcon {
+  margin-right: 12px;
+  font-size: 16px;
+  color: var(--qt-highlight-color);
+}
+
+.recentInfo {
+  flex: 1;
+}
+
+.recentName {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.recentMeta {
+  font-size: 12px;
+  color: var(--qt-text-light);
+}
+
+.recentTime {
+  font-size: 12px;
+  color: var(--qt-text-light);
+}

@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>材质管理器系统 - 辐射计算参数</title>
+    <style>
+        :root {
+            /* QT风格配色 */
+            --qt-bg-color: #f5f5f5;
+            --qt-control-bg: #ffffff;
+            --qt-highlight-color: #0078d7;
+            --qt-highlight-light: #e5f1fb;
+            --qt-text-color: #202020;
+            --qt-text-light: #505050;
+            --qt-border-color: #d0d0d0;
+            --qt-menu-hover: #e5e5e5;
+            --qt-success-color: #2ecc71;
+            --qt-warning-color: #f39c12;
+            --qt-danger-color: #e74c3c;
+            --qt-group-header: #f0f0f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--qt-bg-color);
+            color: var(--qt-text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-size: 13px; /* QT应用通常使用较小的字体 */
+        }
+        
+        /* 菜单栏 */
+        .menu-bar {
+            background-color: var(--qt-control-bg);
+            color: var(--qt-text-color);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 2px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-item {
+            padding: 4px 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--qt-menu-hover);
+            border: 1px solid var(--qt-border-color);
+        }
+        
+        /* 工具栏 */
+        .toolbar {
+            background-color: var(--qt-control-bg);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toolbar-btn {
+            padding: 3px 8px;
+            margin-right: 4px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toolbar-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .toolbar-btn-icon {
+            margin-right: 4px;
+            font-size: 14px;
+        }
+        
+        .toolbar-separator {
+            width: 1px;
+            height: 18px;
+            background-color: var(--qt-border-color);
+            margin: 0 8px;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* 左侧边栏菜单 - QT风格 */
+        .sidebar {
+            width: 220px;
+            background-color: var(--qt-control-bg);
+            border-right: 1px solid var(--qt-border-color);
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        
+        .tree-menu {
+            padding: 4px;
+        }
+        
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 3px 8px;
+            cursor: pointer;
+        }
+        
+        .tree-item:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .tree-item.active {
+            background-color: var(--qt-highlight-light);
+            color: var(--qt-highlight-color);
+            font-weight: bold;
+        }
+        
+        .tree-expand-icon {
+            margin-right: 4px;
+            font-size: 10px;
+            width: 10px;
+        }
+        
+        .tree-icon {
+            margin-right: 4px;
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .tree-children {
+            margin-left: 16px;
+        }
+        
+        /* 右侧内容区 */
+        .content-area {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 面包屑导航 - QT风格 */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+        
+        .breadcrumb-item {
+            color: var(--qt-text-light);
+        }
+        
+        .breadcrumb-link {
+            color: var(--qt-highlight-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb-separator {
+            margin: 0 4px;
+            color: var(--qt-text-light);
+        }
+        
+        /* 步骤导航 - QT风格 */
+        .step-navigation {
+            display: flex;
+            margin-bottom: 12px;
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-control-bg);
+        }
+        
+        .step-item {
+            flex: 1;
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 12px;
+            border-right: 1px solid var(--qt-border-color);
+            position: relative;
+        }
+        
+        .step-item:last-child {
+            border-right: none;
+        }
+        
+        .step-item.completed {
+            background-color: var(--qt-highlight-light);
+            color: var(--qt-highlight-color);
+        }
+        
+        .step-item.active {
+            background-color: var(--qt-highlight-color);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            line-height: 18px;
+            text-align: center;
+            border-radius: 50%;
+            background-color: var(--qt-text-light);
+            color: white;
+            margin-right: 4px;
+            font-size: 11px;
+        }
+        
+        .step-item.completed .step-number,
+        .step-item.active .step-number {
+            background-color: var(--qt-highlight-color);
+        }
+        
+        .step-item.active .step-number {
+            background-color: white;
+            color: var(--qt-highlight-color);
+        }
+        
+        /* 信息提示 - QT风格 */
+        .info-box {
+            padding: 8px;
+            margin-bottom: 12px;
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-highlight-light);
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .info-icon {
+            margin-right: 8px;
+            color: var(--qt-highlight-color);
+            font-size: 14px;
+        }
+        
+        .info-content {
+            flex: 1;
+        }
+        
+        .info-title {
+            font-weight: bold;
+            margin-bottom: 2px;
+            font-size: 12px;
+        }
+        
+        .info-text {
+            color: var(--qt-text-light);
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        /* 内容布局 */
+        .content-layout {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+        }
+        
+        .main-panel {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .side-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        /* QT风格的分组框 */
+        .group-box {
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-control-bg);
+            margin-bottom: 12px;
+        }
+        
+        .group-header {
+            padding: 4px 8px;
+            background-color: var(--qt-group-header);
+            border-bottom: 1px solid var(--qt-border-color);
+            font-weight: bold;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .group-title {
+            flex: 1;
+        }
+        
+        .group-actions {
+            display: flex;
+        }
+        
+        .group-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--qt-text-light);
+            margin-left: 6px;
+        }
+        
+        .group-action-btn:hover {
+            color: var(--qt-highlight-color);
+        }
+        
+        .group-content {
+            padding: 8px;
+        }
+        
+        /* 表单元素 - QT风格 */
+        .form-group {
+            margin-bottom: 8px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 2px;
+            font-size: 12px;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 3px 6px;
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-control-bg);
+            font-size: 12px;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--qt-highlight-color);
+            outline: none;
+        }
+        
+        .form-help {
+            font-size: 11px;
+            color: var(--qt-text-light);
+            margin-top: 2px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        /* 计算预设卡片 */
+        .preset-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        
+        .preset-card {
+            flex: 1;
+            min-width: 100px;
+            border: 1px solid var(--qt-border-color);
+            padding: 6px;
+            cursor: pointer;
+            background-color: var(--qt-control-bg);
+        }
+        
+        .preset-card:hover {
+            background-color: var(--qt-highlight-light);
+            border-color: var(--qt-highlight-color);
+        }
+        
+        .preset-card.selected {
+            background-color: var(--qt-highlight-light);
+            border-color: var(--qt-highlight-color);
+        }
+        
+        .preset-card-title {
+            font-weight: bold;
+            font-size: 11px;
+            margin-bottom: 2px;
+        }
+        
+        .preset-card-desc {
+            font-size: 10px;
+            color: var(--qt-text-light);
+        }
+        
+        /* 折叠面板 - QT风格 */
+        .collapsible {
+            border: 1px solid var(--qt-border-color);
+            margin-bottom: 4px;
+        }
+        
+        .collapsible-header {
+            padding: 4px 8px;
+            background-color: var(--qt-group-header);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .collapsible-body {
+            padding: 8px;
+            border-top: 1px solid var(--qt-border-color);
+            background-color: var(--qt-control-bg);
+        }
+        
+        /* 开关控件 - QT风格 */
+        .switch-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 18px;
+            margin-right: 8px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border: 1px solid var(--qt-border-color);
+            transition: .2s;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            border: 1px solid var(--qt-border-color);
+            transition: .2s;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--qt-highlight-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(16px);
+        }
+        
+        .switch-label {
+            font-size: 12px;
+        }
+        
+        /* 范围滑块 - QT风格 */
+        .range-container {
+            margin-bottom: 8px;
+        }
+        
+        .range-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+        
+        .range-slider {
+            width: 100%;
+            height: 20px;
+        }
+        
+        /* 底部操作栏 - QT风格 */
+        .bottom-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            margin-top: 8px;
+        }
+        
+        .action-info {
+            font-size: 11px;
+            color: var(--qt-text-light);
+            display: flex;
+            align-items: center;
+        }
+        
+        .action-highlight {
+            color: var(--qt-highlight-color);
+            font-weight: bold;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+        }
+        
+        /* 按钮 - QT风格 */
+        .btn {
+            padding: 3px 8px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            cursor: pointer;
+            font-size: 12px;
+            min-width: 70px;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .btn-primary {
+            background-color: var(--qt-highlight-color);
+            color: white;
+            border-color: var(--qt-highlight-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #0063b1;
+        }
+        
+        /* 状态栏 - QT风格 */
+        .status-bar {
+            background-color: var(--qt-control-bg);
+            border-top: 1px solid var(--qt-border-color);
+            padding: 2px 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--qt-text-light);
+        }
+        
+        .status-section {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-indicator.online {
+            background-color: var(--qt-success-color);
+        }
+        
+        .status-divider {
+            margin: 0 8px;
+            color: var(--qt-border-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 菜单栏 - QT风格 -->
+    <div class="menu-bar">
+        <div class="menu-item">文件</div>
+        <div class="menu-item">编辑</div>
+        <div class="menu-item">视图</div>
+        <div class="menu-item">工具</div>
+        <div class="menu-item">窗口</div>
+        <div class="menu-item">帮助</div>
+    </div>
+    
+    <!-- 工具栏 - QT风格 -->
+    <div class="toolbar">
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📁</span>
+            <span>打开</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">💾</span>
+            <span>保存</span>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">⬅️</span>
+            <span>上一步</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">▶️</span>
+            <span>启动计算</span>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📋</span>
+            <span>参数设置</span>
+        </button>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <!-- 左侧树形菜单 - QT风格 -->
+        <div class="sidebar">
+            <div class="tree-menu">
+                <div class="tree-item">
+                    <span class="tree-icon">🏠</span>
+                    <span>首页</span>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">📋</span>
+                    <span>材质管理</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>基础材质</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>复合材质</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>光谱数据</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▼</span>
+                    <span class="tree-icon">📁</span>
+                    <span>PSD处理</span>
+                </div>
+                <div class="tree-children">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>导入PSD</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>图层管理</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>材质关联</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">⚙️</span>
+                    <span>计算与输出</span>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">👥</span>
+                    <span>系统管理</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>用户管理</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>权限设置</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>系统设置</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主要内容区域 - QT风格 -->
+        <div class="content-area">
+            <!-- 面包屑导航 -->
+            <div class="breadcrumb">
+                <span class="breadcrumb-link">首页</span>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-link">PSD处理</span>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-item">城市场景.psd</span>
+            </div>
+            
+            <!-- 步骤导航 -->
+            <div class="step-navigation">
+                <div class="step-item completed">
+                    <span class="step-number">1</span>
+                    <span>导入PSD</span>
+                </div>
+                <div class="step-item completed">
+                    <span class="step-number">2</span>
+                    <span>材质关联</span>
+                </div>
+                <div class="step-item active">
+                    <span class="step-number">3</span>
+                    <span>参数设置</span>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">4</span>
+                    <span>辐射计算</span>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">5</span>
+                    <span>纹理导出</span>
+                </div>
+            </div>
+            
+            <!-- 信息提示框 -->
+            <div class="info-box">
+                <div class="info-icon">ℹ️</div>
+                <div class="info-content">
+                    <div class="info-title">辐射计算参数说明</div>
+                    <div class="info-text">
+                        在这个页面，您可以设置辐射传输计算所需的环境参数和模型参数。设置完成后，点击"启动计算"按钮开始执行计算。
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 内容布局 -->
+            <div class="content-layout">
+                <!-- 主要面板 -->
+                <div class="main-panel">
+                    
+                    <!-- 高级参数分组 -->
+                    <div class="group-box">
+                        <div class="group-header">
+                            <div class="group-title">
+                                <span>🔧 环境参数设置</span>
+                            </div>
+                            <div class="group-actions">
+                                <button class="group-action-btn" title="帮助信息">❓</button>
+                            </div>
+                        </div>
+                        <div class="group-content">
+                            <!-- 折叠面板 -->
+                            <div class="collapsible">
+                                <div class="collapsible-header">
+                                    <span>大气参数设置</span>
+                                    <span>🔽</span>
+                                </div>
+                                <div class="collapsible-body">
+                                    <div class="form-row">
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label class="form-label">大气透过率</label>
+                                                <input type="number" class="form-input" value="0.85" min="0" max="1" step="0.01">
+                                                <div class="form-help">大气对辐射的透过率 (0-1)</div>
+                                            </div>
+                                        </div>
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label class="form-label">大气温度 (K)</label>
+                                                <input type="number" class="form-input" value="287" min="0" step="0.1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label class="form-label">湿度 (%)</label>
+                                                <input type="number" class="form-input" value="65" min="0" max="100" step="1">
+                                            </div>
+                                        </div>
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label class="form-label">气压 (kPa)</label>
+                                                <input type="number" class="form-input" value="101.3" min="0" step="0.1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="collapsible">
+                                <div class="collapsible-header">
+                                    <span>辐射传输模型参数</span>
+                                    <span>🔽</span>
+                                </div>
+                                <div class="collapsible-body">
+                                    <div class="form-row">
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label class="form-label">收敛阈值</label>
+                                                <input type="number" class="form-input" value="0.001" min="0" step="0.0001">
+                                                <div class="form-help">迭代计算收敛的阈值</div>
+                                            </div>
+                                        </div>
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label class="form-label">采样点数</label>
+                                                <input type="number" class="form-input" value="64" min="1" step="1">
+                                                <div class="form-help">每单位面积的采样点数</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="range-container">
+                                        <label class="form-label">反射计算层数: 3层</label>
+                                        <input type="range" class="range-slider" min="0" max="10" step="1" value="3">
+                                        <div class="form-help">多重反射的计算深度</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="collapsible">
+                                <div class="collapsible-header">
+                                    <span>波长设置</span>
+                                    <span>🔽</span>
+                                </div>
+                                <div class="collapsible-body">
+                                    <div class="form-row">
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label class="form-label">最小波长 (μm)</label>
+                                                <input type="number" class="form-input" value="3" min="0" step="0.1">
+                                            </div>
+                                        </div>
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label class="form-label">最大波长 (μm)</label>
+                                                <input type="number" class="form-input" value="14" min="0" step="0.1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">波长采样数</label>
+                                        <input type="number" class="form-input" value="32" min="1" step="1">
+                                        <div class="form-help">计算中使用的波长采样点数</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="collapsible">
+                                <div class="collapsible-header">
+                                    <span>性能设置</span>
+                                    <span>🔽</span>
+                                </div>
+                                <div class="collapsible-body">
+                                    <div class="form-group">
+                                        <label class="form-label">线程数</label>
+                                        <select class="form-select">
+                                            <option>自动 (推荐)</option>
+                                            <option>2 线程</option>
+                                            <option>4 线程</option>
+                                            <option>8 线程</option>
+                                            <option>16 线程</option>
+                                        </select>
+                                        <div class="form-help">计算使用的CPU线程数</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">内存限制 (GB)</label>
+                                        <input type="number" class="form-input" value="4" min="1" step="1">
+                                        <div class="form-help">计算过程中的最大内存使用量</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">启用GPU加速</label>
+                                        <div class="switch-container">
+                                            <label class="switch">
+                                                <input type="checkbox" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                            <span class="switch-label">已启用</span>
+                                        </div>
+                                        <div class="form-help">使用GPU加速计算过程 (需要兼容的显卡)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 侧边面板 -->
+                <div class="side-panel">
+                    <!-- 计算预估信息 -->
+                    <div class="group-box">
+                        <div class="group-header">
+                            <div class="group-title">
+                                <span>⏱️ 计算预估</span>
+                            </div>
+                        </div>
+                        <div class="group-content">
+                            <div style="padding: 3px 0; border-bottom: 1px solid var(--qt-border-color);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                                    <span style="color: var(--qt-text-light); font-size: 11px;">预估计算时间</span>
+                                    <span style="font-weight: 500; font-size: 11px;">约 3 分钟</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                                    <span style="color: var(--qt-text-light); font-size: 11px;">内存使用</span>
+                                    <span style="font-weight: 500; font-size: 11px;">约 1.2 GB</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--qt-text-light); font-size: 11px;">预计输出大小</span>
+                                    <span style="font-weight: 500; font-size: 11px;">约 145 MB</span>
+                                </div>
+                            </div>
+                            
+                            <div style="padding: 3px 0; font-size: 11px;">
+                                <div style="margin-bottom: 3px; color: var(--qt-text-light);">基于当前设置的性能预估</div>
+                                <div style="display: flex; gap: 3px; align-items: center; margin-bottom: 3px;">
+                                    <div style="width: 6px; height: 6px; border-radius: 50%; background-color: var(--qt-success-color);"></div>
+                                    <span>精度: 中等</span>
+                                </div>
+                                <div style="display: flex; gap: 3px; align-items: center; margin-bottom: 3px;">
+                                    <div style="width: 6px; height: 6px; border-radius: 50%; background-color: var(--qt-success-color);"></div>
+                                    <span>速度: 适中</span>
+                                </div>
+                                <div style="display: flex; gap: 3px; align-items: center;">
+                                    <div style="width: 6px; height: 6px; border-radius: 50%; background-color: var(--qt-success-color);"></div>
+                                    <span>内存效率: 良好</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 输出选项 -->
+                    <div class="group-box">
+                        <div class="group-header">
+                            <div class="group-title">
+                                <span>🔍 输出选项</span>
+                            </div>
+                        </div>
+                        <div class="group-content">
+                            <div class="form-group">
+                                <label class="form-label">生成温度纹理</label>
+                                <div class="switch-container">
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="switch-label">已启用</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">生成分类纹理</label>
+                                <div class="switch-container">
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="switch-label">已启用</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">生成发射率纹理</label>
+                                <div class="switch-container">
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="switch-label">已启用</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">温度范围 (K)</label>
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <input type="number" class="form-input" value="270" step="0.1" placeholder="最低温度">
+                                    </div>
+                                    <div class="form-col">
+                                        <input type="number" class="form-input" value="310" step="0.1" placeholder="最高温度">
+                                    </div>
+                                </div>
+                                <div class="form-help">定义温度纹理的映射范围</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">保存计算结果</label>
+                                <div class="switch-container">
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="switch-label">已启用</span>
+                                </div>
+                                <div class="form-help">将计算结果保存为项目文件供后续使用</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 参数管理 -->
+                    <div class="group-box">
+                        <div class="group-header">
+                            <div class="group-title">
+                                <span>📁 参数管理</span>
+                            </div>
+                        </div>
+                        <div class="group-content">
+                            <div class="form-group">
+                                <button class="btn" style="width: 100%;">
+                                    <span>保存为新预设</span>
+                                </button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button class="btn" style="width: 100%;">
+                                    <span>加载已保存参数</span>
+                                </button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button class="btn" style="width: 100%;">
+                                    <span>重置为默认参数</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 底部操作栏 -->
+            <div class="bottom-actions">
+                <div class="action-info">
+                    设备状态: <span class="action-highlight">就绪</span> &nbsp; | &nbsp; 
+                    可用内存: <span class="action-highlight">14.2 GB</span> &nbsp; | &nbsp;
+                    计算引擎: <span class="action-highlight">标准版</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn">
+                        <span>上一步</span>
+                    </button>
+                    <button class="btn-primary">
+                        <span>启动计算</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 状态栏 - QT风格 -->
+    <div class="status-bar">
+        <div class="status-section">
+            <div class="status-indicator online"></div>
+            <span>系统运行正常</span>
+            <span class="status-divider">|</span>
+            <span>数据库已连接</span>
+            <span class="status-divider">|</span>
+            <span>材质数: 42</span>
+        </div>
+        <div class="status-section">
+            <span>材质管理器系统 v1.2.0</span>
+        </div>
+    </div>
+</body>
+</html>

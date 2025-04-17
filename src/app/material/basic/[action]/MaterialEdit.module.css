@@ -1,0 +1,340 @@
+.pageContainer {
+  padding: 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.pageTitle {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--qt-text-color);
+  margin: 0;
+}
+
+.breadcrumb {
+  font-size: 12px;
+  color: var(--qt-text-light);
+  margin-top: 4px;
+}
+
+.breadcrumbLink {
+  color: var(--qt-highlight-color);
+  cursor: pointer;
+}
+
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  margin: 0 8px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.cancelButton,
+.saveButton {
+  padding: 6px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cancelButton {
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  color: var(--qt-text-color);
+}
+
+.saveButton {
+  background-color: var(--qt-highlight-color);
+  border: 1px solid var(--qt-highlight-color);
+  color: white;
+}
+
+/* 编辑区布局 */
+.editLayout {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.editMain {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.editSidebar {
+  flex: 1;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 面板样式 */
+.panel {
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+}
+
+.panelHeader {
+  background-color: var(--qt-section-header);
+  padding: 8px 12px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--qt-border-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panelBody {
+  padding: 16px;
+}
+
+/* 表单元素 */
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+  font-size: 13px;
+}
+
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  border-color: var(--qt-highlight-color);
+  outline: none;
+}
+
+.formTextarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.formHelp {
+  font-size: 12px;
+  color: var(--qt-text-light);
+  margin-top: 4px;
+}
+
+.formRow {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.formCol {
+  flex: 1;
+}
+
+/* 范围滑块 */
+.rangeSlider {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 4px;
+  background-color: var(--qt-border-color);
+  outline: none;
+  margin: 8px 0;
+}
+
+.rangeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background-color: var(--qt-highlight-color);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* 光谱数据表格 */
+.spectrumTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.spectrumTable th,
+.spectrumTable td {
+  padding: 8px;
+  border: 1px solid var(--qt-border-color);
+  text-align: left;
+  font-size: 13px;
+}
+
+.spectrumTable th {
+  background-color: var(--qt-section-header);
+  font-weight: 500;
+}
+
+.spectrumTable input {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+}
+
+.tableActionBtn {
+  padding: 4px 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.tableActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.addRowBtn,
+.importBtn {
+  padding: 6px 12px;
+  border: 1px solid var(--qt-border-color);
+  background-color: var(--qt-control-bg);
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+
+/* 信息项 */
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.infoLabel {
+  color: var(--qt-text-light);
+}
+
+.infoValue {
+  font-weight: 500;
+}
+
+.previewPlaceholder {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--qt-bg-color);
+  border: 1px solid var(--qt-border-color);
+  color: var(--qt-text-light);
+}
+
+.previewHelp {
+  text-align: center;
+  font-size: 12px;
+  color: var(--qt-text-light);
+  margin-top: 8px;
+}
+
+.similarList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.similarItem {
+  padding: 8px;
+  border: 1px solid var(--qt-border-color);
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+}
+
+.similarName {
+  color: var(--qt-highlight-color);
+  font-weight: 500;
+  margin-bottom: 2px;
+  cursor: pointer;
+}
+
+.similarSimilarity {
+  font-size: 12px;
+  color: var(--qt-text-light);
+}
+
+.sidebar {
+  width: 220px;
+  background-color: var(--qt-control-bg);
+  border-right: 1px solid var(--qt-border-color);
+  flex-shrink: 0;
+}
+
+.sideMenu {
+  padding: 4px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-bottom: 2px;
+}
+
+.menuItem:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.activeMenuItem {
+  background-color: var(--qt-highlight-light);
+  color: var(--qt-highlight-color);
+  font-weight: 500;
+}
+
+.menuIcon {
+  margin-right: 8px;
+  width: 16px;
+  text-align: center;
+}
+
+.menuChildren {
+  margin-left: 24px;
+  margin-bottom: 4px;
+}
+
+.menuChildren .menuItem {
+  padding: 4px 12px;
+}
+
+

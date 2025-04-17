@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>材质管理器系统 - 材质编辑</title>
+    <style>
+        :root {
+            /* QT风格配色 */
+            --qt-bg-color: #f5f5f5;
+            --qt-control-bg: #ffffff;
+            --qt-highlight-color: #0078d7;
+            --qt-highlight-light: #e5f1fb;
+            --qt-text-color: #202020;
+            --qt-text-light: #505050;
+            --qt-border-color: #d0d0d0;
+            --qt-menu-hover: #e5e5e5;
+            --qt-success-color: #2ecc71;
+            --qt-warning-color: #f39c12;
+            --qt-danger-color: #e74c3c;
+            --qt-section-header: #f0f0f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--qt-bg-color);
+            color: var(--qt-text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-size: 13px;
+        }
+        
+        /* 菜单栏 */
+        .menu-bar {
+            background-color: var(--qt-control-bg);
+            color: var(--qt-text-color);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 2px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-item {
+            padding: 4px 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--qt-menu-hover);
+            border: 1px solid var(--qt-border-color);
+        }
+        
+        /* 工具栏 */
+        .toolbar {
+            background-color: var(--qt-control-bg);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toolbar-btn {
+            padding: 3px 8px;
+            margin-right: 4px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toolbar-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .toolbar-btn-icon {
+            margin-right: 4px;
+            font-size: 14px;
+        }
+        
+        .toolbar-separator {
+            width: 1px;
+            height: 18px;
+            background-color: var(--qt-border-color);
+            margin: 0 8px;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* 左侧边栏菜单 - QT风格 */
+        .sidebar {
+            width: 220px;
+            background-color: var(--qt-control-bg);
+            border-right: 1px solid var(--qt-border-color);
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        
+        .tree-menu {
+            padding: 4px;
+        }
+        
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 3px 8px;
+            cursor: pointer;
+        }
+        
+        .tree-item:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .tree-item.active {
+            background-color: var(--qt-highlight-light);
+            color: var(--qt-highlight-color);
+            font-weight: bold;
+        }
+        
+        .tree-expand-icon {
+            margin-right: 4px;
+            font-size: 10px;
+            width: 10px;
+        }
+        
+        .tree-icon {
+            margin-right: 4px;
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .tree-children {
+            margin-left: 16px;
+        }
+        
+        /* 右侧内容区 */
+        .content-area {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+        }
+        
+        /* 页面标题和操作区 */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--qt-border-color);
+        }
+        
+        .page-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .page-breadcrumb {
+            font-size: 12px;
+            color: var(--qt-text-light);
+            margin-top: 2px;
+        }
+        
+        .breadcrumb-link {
+            color: var(--qt-highlight-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+        }
+        
+        .page-actions {
+            display: flex;
+        }
+        
+        /* 主内容布局 */
+        .edit-layout {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .edit-main {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .edit-sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 300px;
+        }
+        
+        /* 表单面板 */
+        .panel {
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+        }
+        
+        .panel-header {
+            background-color: var(--qt-section-header);
+            padding: 6px 8px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--qt-border-color);
+            font-size: 13px;
+        }
+        
+        .panel-header-icon {
+            margin-right: 4px;
+        }
+        
+        .panel-body {
+            padding: 8px;
+        }
+        
+        /* 表单元素 */
+        .form-group {
+            margin-bottom: 8px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            font-size: 13px;
+            background-color: var(--qt-control-bg);
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--qt-highlight-color);
+            outline: none;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .form-help {
+            font-size: 11px;
+            color: var(--qt-text-light);
+            margin-top: 2px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        .form-addon-group {
+            display: flex;
+        }
+        
+        .form-addon {
+            padding: 4px 6px;
+            background-color: var(--qt-section-header);
+            border: 1px solid var(--qt-border-color);
+            border-left: none;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        /* 光谱数据表格 */
+        .spectrum-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .spectrum-table th {
+            background-color: var(--qt-section-header);
+            padding: 4px 6px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 12px;
+            border-bottom: 1px solid var(--qt-border-color);
+        }
+        
+        .spectrum-table td {
+            padding: 4px 6px;
+            border-bottom: 1px solid var(--qt-border-color);
+        }
+        
+        .spectrum-table input {
+            width: 100%;
+            padding: 3px 4px;
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            font-size: 12px;
+        }
+        
+        .spectrum-table input:focus {
+            border-color: var(--qt-highlight-color);
+            outline: none;
+        }
+        
+        .spectrum-table-actions {
+            text-align: center;
+        }
+        
+        .table-action-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .table-action-btn:hover {
+            color: var(--qt-danger-color);
+        }
+        
+        .add-row-btn {
+            padding: 3px 8px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            font-size: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 6px;
+        }
+        
+        .add-row-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .add-row-icon {
+            margin-right: 4px;
+        }
+        
+        /* 底部按钮栏 */
+        .button-bar {
+            background-color: var(--qt-section-header);
+            padding: 8px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+            border-top: 1px solid var(--qt-border-color);
+            margin-top: 12px;
+        }
+        
+        .success-btn {
+            background-color: var(--qt-success-color);
+            color: white;
+            border: 1px solid var(--qt-success-color);
+        }
+        
+        .success-btn:hover {
+            background-color: #27ae60;
+            border-color: #27ae60;
+        }
+        
+        /* 状态栏 */
+        .status-bar {
+            background-color: var(--qt-control-bg);
+            border-top: 1px solid var(--qt-border-color);
+            padding: 2px 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--qt-text-light);
+        }
+        
+        .status-section {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-indicator.online {
+            background-color: var(--qt-success-color);
+        }
+        
+        .status-divider {
+            margin: 0 8px;
+            color: var(--qt-border-color);
+        }
+        
+        /* 材质信息卡片 */
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+        
+        .info-label {
+            color: var(--qt-text-light);
+        }
+        
+        .info-value {
+            font-weight: 500;
+        }
+        
+        /* 范围滑块 */
+        .range-slider {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 4px;
+            background-color: #ddd;
+            outline: none;
+            margin: 8px 0;
+        }
+        
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background-color: var(--qt-highlight-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .similar-item {
+            padding: 6px;
+            border-bottom: 1px solid var(--qt-border-color);
+        }
+        
+        .similar-name {
+            color: var(--qt-highlight-color);
+            font-weight: 500;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .similar-similarity {
+            font-size: 11px;
+            color: var(--qt-text-light);
+        }
+    </style>
+</head>
+<body>
+    <!-- 菜单栏 - QT风格 -->
+    <div class="menu-bar">
+        <div class="menu-item">文件</div>
+        <div class="menu-item">编辑</div>
+        <div class="menu-item">视图</div>
+        <div class="menu-item">工具</div>
+        <div class="menu-item">窗口</div>
+        <div class="menu-item">帮助</div>
+    </div>
+    
+    <!-- 工具栏 - QT风格 -->
+    <div class="toolbar">
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">💾</span>
+            <span>保存</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">🔄</span>
+            <span>刷新</span>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📋</span>
+            <span>复制</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📤</span>
+            <span>导出</span>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📊</span>
+            <span>光谱预览</span>
+        </button>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <!-- 左侧树形菜单 - QT风格 -->
+        <div class="sidebar">
+            <div class="tree-menu">
+                <div class="tree-item">
+                    <span class="tree-icon">🏠</span>
+                    <span>首页</span>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▼</span>
+                    <span class="tree-icon">📋</span>
+                    <span>材质管理</span>
+                </div>
+                <div class="tree-children">
+                    <div class="tree-item active">
+                        <span class="tree-icon"></span>
+                        <span>基础材质</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>复合材质</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>光谱数据</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">📁</span>
+                    <span>PSD处理</span>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">⚙️</span>
+                    <span>计算与输出</span>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">👥</span>
+                    <span>系统管理</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主要内容区 - QT风格 -->
+        <div class="content-area">
+            <!-- 页面标题和操作按钮 -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">编辑基础材质</h1>
+                    <div class="page-breadcrumb">
+                        <span class="breadcrumb-link">首页</span> > 
+                        <span class="breadcrumb-link">基础材质</span> > 
+                        <span>编辑材质</span>
+                    </div>
+                </div>
+                <div class="page-actions">
+                    <button class="toolbar-btn">
+                        <span class="toolbar-btn-icon">↩️</span>
+                        <span>取消</span>
+                    </button>
+                    <button class="toolbar-btn success-btn" style="margin-left: 4px;">
+                        <span class="toolbar-btn-icon">💾</span>
+                        <span>保存</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 编辑区布局 -->
+            <div class="edit-layout">
+                <!-- 主要编辑区 -->
+                <div class="edit-main">
+                    <!-- 基本信息面板 -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-header-icon">📝</span>
+                            <span>基本信息</span>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="form-label" for="material-name">材质名称</label>
+                                <input type="text" id="material-name" class="form-input" value="铝合金A7075">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label" for="avg-temperature">平均温度</label>
+                                        <div class="form-addon-group">
+                                            <input type="number" id="avg-temperature" class="form-input" value="293" min="0" step="0.1">
+                                            <div class="form-addon">K</div>
+                                        </div>
+                                        <div class="form-help">材质的标准参考温度</div>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label" for="total-emissivity">总发射率</label>
+                                        <input type="number" id="total-emissivity" class="form-input" value="0.12" min="0" max="1" step="0.01">
+                                        <div class="form-help">取值范围: 0.0 - 1.0</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="modulation-factor">调制因子</label>
+                                <input type="range" id="modulation-factor" class="range-slider" min="0" max="1" step="0.01" value="0.85">
+                                <div class="form-help">调制因子: 0.85</div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">主类别</label>
+                                        <select class="form-select">
+                                            <option selected>金属</option>
+                                            <option>非金属</option>
+                                            <option>复合</option>
+                                            <option>纤维</option>
+                                            <option>涂层</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">子类别</label>
+                                        <select class="form-select">
+                                            <option selected>合金</option>
+                                            <option>纯金属</option>
+                                            <option>氧化物</option>
+                                            <option>碳材料</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="material-desc">材质描述</label>
+                                <textarea id="material-desc" class="form-textarea">铝合金A7075主要含有锌、镁和铜等合金元素，具有优良的强度、良好的抗疲劳性能和抗腐蚀性能。常用于飞机结构件、导弹零件等。</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 光谱数据面板 -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-header-icon">📊</span>
+                            <span>光谱数据</span>
+                        </div>
+                        <div class="panel-body">
+                            <table class="spectrum-table">
+                                <thead>
+                                    <tr>
+                                        <th width="33%">波长 (μm)</th>
+                                        <th width="33%">光谱反射率</th>
+                                        <th width="33%">光谱发射率</th>
+                                        <th width="1%">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="number" value="2.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.88" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.12" step="0.01" min="0" max="1"></td>
+                                        <td class="spectrum-table-actions">
+                                            <button class="table-action-btn">🗑️</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" value="4.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.85" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.15" step="0.01" min="0" max="1"></td>
+                                        <td class="spectrum-table-actions">
+                                            <button class="table-action-btn">🗑️</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" value="6.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.82" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.18" step="0.01" min="0" max="1"></td>
+                                        <td class="spectrum-table-actions">
+                                            <button class="table-action-btn">🗑️</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" value="8.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.80" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.20" step="0.01" min="0" max="1"></td>
+                                        <td class="spectrum-table-actions">
+                                            <button class="table-action-btn">🗑️</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" value="10.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.83" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.17" step="0.01" min="0" max="1"></td>
+                                        <td class="spectrum-table-actions">
+                                            <button class="table-action-btn">🗑️</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" value="12.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.87" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.13" step="0.01" min="0" max="1"></td>
+                                        <td class="spectrum-table-actions">
+                                            <button class="table-action-btn">🗑️</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                                <button class="add-row-btn">
+                                    <span class="add-row-icon">+</span>
+                                    <span>添加数据点</span>
+                                </button>
+                                <button class="toolbar-btn">
+                                    <span class="toolbar-btn-icon">📁</span>
+                                    <span>导入CSV</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 侧边信息区 -->
+                <div class="edit-sidebar">
+                    <!-- 材质信息面板 -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-header-icon">ℹ️</span>
+                            <span>材质信息</span>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="form-label">创建信息</label>
+                                <div class="info-item">
+                                    <span class="info-label">创建时间:</span>
+                                    <span class="info-value">2025-04-10 14:32</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">创建用户:</span>
+                                    <span class="info-value">管理员</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">最后修改:</span>
+                                    <span class="info-value">2025-04-15 09:21</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">使用情况</label>
+                                <div class="info-item">
+                                    <span class="info-label">用于复合材质:</span>
+                                    <span class="info-value">3个</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">关联PSD图层:</span>
+                                    <span class="info-value">2个</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 光谱曲线预览 -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-header-icon">📊</span>
+                            <span>发射率曲线预览</span>
+                        </div>
+                        <div class="panel-body">
+                            <div style="width: 100%; height: 150px; background-color: #f9f9f9; display: flex; justify-content: center; align-items: center; border: 1px solid var(--qt-border-color);">
+                                <span style="color: var(--qt-text-light);">保存后查看曲线预览</span>
+                            </div>
+                            <div class="form-help" style="text-align: center; margin-top: 4px;">
+                                点击上方"光谱预览"按钮查看完整曲线图
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 类似材质推荐 -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-header-icon">🔍</span>
+                            <span>类似材质</span>
+                        </div>
+                        <div class="panel-body" style="padding: 0;">
+                            <div class="similar-item">
+                                <div class="similar-name">铝合金A6061</div>
+                                <div class="similar-similarity">相似度: 92%</div>
+                            </div>
+                            <div class="similar-item">
+                                <div class="similar-name">铝合金A2024</div>
+                                <div class="similar-similarity">相似度: 87%</div>
+                            </div>
+                            <div class="similar-item" style="border-bottom: none;">
+                                <div class="similar-name">纯铝</div>
+                                <div class="similar-similarity">相似度: 75%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 底部按钮栏 -->
+            <div class="button-bar">
+                <button class="toolbar-btn">
+                    <span class="toolbar-btn-icon">↩️</span>
+                    <span>取消</span>
+                </button>
+                <button class="toolbar-btn success-btn">
+                    <span class="toolbar-btn-icon">💾</span>
+                    <span>保存</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <div class="status-section">
+            <div class="status-indicator online"></div>
+            <span>系统运行正常</span>
+            <span class="status-divider">|</span>
+            <span>数据点: 6</span>
+            <span class="status-divider">|</span>
+            <span>上次保存: 2025-04-15 09:21</span>
+        </div>
+        <div class="status-section">
+            <span>材质管理器系统 v1.2.0</span>
+        </div>
+    </div>
+</body>
+</html>

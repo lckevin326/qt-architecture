@@ -1,0 +1,58 @@
+.sidebar {
+  width: 200px;
+  background-color: var(--qt-control-bg);
+  border-right: 1px solid var(--qt-border-color);
+  user-select: none;
+  overflow-y: auto;
+}
+
+.menuItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.menuHeader {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.menuHeader:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.menuHeader.active {
+  background-color: var(--qt-highlight-light);
+  color: var(--qt-highlight-color);
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submenu {
+  padding-left: 24px;
+}
+
+.submenuItem {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.submenuItem:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.submenuItem.active {
+  background-color: var(--qt-highlight-light);
+  color: var(--qt-highlight-color);
+}

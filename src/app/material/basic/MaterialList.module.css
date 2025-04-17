@@ -1,0 +1,138 @@
+.pageContainer {
+  padding: 20px;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.breadcrumb {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.breadcrumbLink {
+  color: #0078d7;
+  cursor: pointer;
+}
+
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  margin: 0 8px;
+  color: #999;
+}
+
+.createButton {
+  padding: 8px 16px;
+  background-color: #0078d7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.createButton:hover {
+  background-color: #006abc;
+}
+
+.toolBar {
+  margin-bottom: 20px;
+}
+
+.searchBox {
+  display: flex;
+  gap: 8px;
+  max-width: 400px;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.searchButton {
+  padding: 8px 16px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.searchButton:hover {
+  background-color: #e5e5e5;
+}
+
+.tableContainer {
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.editButton,
+.deleteButton {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  margin-right: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.editButton {
+  background-color: #fff;
+  color: #0078d7;
+}
+
+.editButton:hover {
+  background-color: #f0f7ff;
+}
+
+.deleteButton {
+  background-color: #fff;
+  color: #e74c3c;
+}
+
+.deleteButton:hover {
+  background-color: #fff5f5;
+}

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>材质管理器系统 - 光谱数据管理</title>
+    <style>
+        :root {
+            /* QT风格配色 */
+            --qt-bg-color: #f5f5f5;
+            --qt-control-bg: #ffffff;
+            --qt-highlight-color: #0078d7;
+            --qt-highlight-light: #e5f1fb;
+            --qt-text-color: #202020;
+            --qt-text-light: #505050;
+            --qt-border-color: #d0d0d0;
+            --qt-menu-hover: #e5e5e5;
+            --qt-success-color: #2ecc71;
+            --qt-warning-color: #f39c12;
+            --qt-danger-color: #e74c3c;
+            --qt-accent-color: #9b59b6;
+            --qt-accent-light: #f5ebf9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--qt-bg-color);
+            color: var(--qt-text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-size: 13px;
+        }
+        
+        /* 菜单栏 */
+        .menu-bar {
+            background-color: var(--qt-control-bg);
+            color: var(--qt-text-color);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 2px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-item {
+            padding: 4px 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--qt-menu-hover);
+            border: 1px solid var(--qt-border-color);
+        }
+        
+        /* 工具栏 */
+        .toolbar {
+            background-color: var(--qt-control-bg);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toolbar-btn {
+            padding: 3px 8px;
+            margin-right: 4px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .toolbar-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .toolbar-btn-icon {
+            margin-right: 4px;
+            font-size: 14px;
+        }
+        
+        .toolbar-separator {
+            width: 1px;
+            height: 18px;
+            background-color: var(--qt-border-color);
+            margin: 0 8px;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* 左侧菜单 */
+        .sidebar {
+            width: 220px;
+            background-color: var(--qt-control-bg);
+            border-right: 1px solid var(--qt-border-color);
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        
+        .tree-menu {
+            padding: 4px;
+        }
+        
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 3px 8px;
+            cursor: pointer;
+        }
+        
+        .tree-item:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .tree-item.active {
+            background-color: var(--qt-highlight-light);
+            color: var(--qt-highlight-color);
+            font-weight: bold;
+        }
+        
+        .tree-expand-icon {
+            margin-right: 4px;
+            font-size: 10px;
+            width: 10px;
+        }
+        
+        .tree-icon {
+            margin-right: 4px;
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .tree-children {
+            margin-left: 16px;
+        }
+        
+        /* 右侧内容区 */
+        .content-area {
+            flex: 1;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 标题栏 */
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .page-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .header-actions {
+            display: flex;
+        }
+        
+        /* 信息提示 */
+        .info-panel {
+            background-color: var(--qt-accent-light);
+            border: 1px solid var(--qt-accent-color);
+            padding: 8px;
+            margin-bottom: 12px;
+            border-radius: 2px;
+        }
+        
+        .info-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+        
+        .info-content {
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--qt-text-light);
+        }
+        
+        /* 搜索栏 */
+        .search-filter-bar {
+            display: flex;
+            margin-bottom: 12px;
+            gap: 8px;
+        }
+        
+        .search-box {
+            flex: 1;
+            display: flex;
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 4px 8px;
+            border: none;
+            outline: none;
+            font-size: 12px;
+        }
+        
+        .search-btn {
+            background-color: var(--qt-control-bg);
+            border: none;
+            border-left: 1px solid var(--qt-border-color);
+            padding: 0 8px;
+            cursor: pointer;
+        }
+        
+        .filter-dropdown {
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            background-color: var(--qt-control-bg);
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .filter-dropdown:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .filter-icon {
+            margin-right: 4px;
+        }
+        
+        /* 主工作区 */
+        .work-area {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+            min-height: 0; /* 重要：允许内容缩小以适应容器 */
+        }
+        
+        /* 左侧材质面板 */
+        .material-panel {
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-control-bg);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            background-color: var(--qt-highlight-light);
+            padding: 6px 8px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--qt-border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        
+        .panel-actions {
+            display: flex;
+        }
+        
+        .panel-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px;
+            margin-left: 4px;
+            font-size: 13px;
+        }
+        
+        .panel-btn:hover {
+            color: var(--qt-highlight-color);
+        }
+        
+        .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0; /* 重要：允许内容缩小 */
+        }
+        
+        /* 材质列表 */
+        .material-list {
+            list-style: none;
+        }
+        
+        .material-item {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--qt-border-color);
+            cursor: pointer;
+        }
+        
+        .material-item:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .material-item.selected {
+            background-color: var(--qt-highlight-light);
+        }
+        
+        .material-name {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+        
+        .material-info {
+            display: flex;
+            font-size: 11px;
+            color: var(--qt-text-light);
+        }
+        
+        .material-info-item {
+            margin-right: 8px;
+        }
+        
+        /* 导入区域 */
+        .import-area {
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            background-color: var(--qt-control-bg);
+            padding: 8px;
+            margin-top: 8px;
+        }
+        
+        .import-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .drop-zone {
+            border: 1px dashed var(--qt-border-color);
+            padding: 12px;
+            text-align: center;
+            background-color: var(--qt-bg-color);
+            cursor: pointer;
+        }
+        
+        .drop-zone:hover {
+            border-color: var(--qt-highlight-color);
+            background-color: var(--qt-highlight-light);
+        }
+        
+        .drop-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--qt-text-light);
+        }
+        
+        .drop-text {
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        
+        .file-formats {
+            font-size: 11px;
+            color: var(--qt-text-light);
+        }
+        
+        /* 右侧光谱数据编辑 */
+        .spectral-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-control-bg);
+            border-radius: 2px;
+            overflow: hidden;
+            min-height: 0; /* 重要：允许内容缩小 */
+        }
+        
+        .tab-bar {
+            display: flex;
+            background-color: var(--qt-bg-color);
+            border-bottom: 1px solid var(--qt-border-color);
+        }
+        
+        .tab {
+            padding: 6px 12px;
+            background-color: var(--qt-bg-color);
+            border-right: 1px solid var(--qt-border-color);
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .tab.active {
+            background-color: var(--qt-control-bg);
+            border-bottom: 1px solid var(--qt-control-bg);
+            position: relative;
+            bottom: -1px;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0; /* 允许内容缩小 */
+        }
+        
+        /* 光谱图表 */
+        .chart-container {
+            height: 250px;
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-bg-color);
+            margin-bottom: 8px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .chart-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            margin-left: 8px;
+        }
+        
+        .control-label {
+            margin-right: 4px;
+        }
+        
+        .control-select {
+            border: 1px solid var(--qt-border-color);
+            padding: 2px 4px;
+            border-radius: 2px;
+            font-size: 12px;
+        }
+        
+        /* 数据表格 */
+        .data-table-container {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            background-color: var(--qt-bg-color);
+            text-align: left;
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--qt-border-color);
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .data-table td {
+            padding: 4px 8px;
+            border-bottom: 1px solid var(--qt-border-color);
+            font-size: 12px;
+        }
+        
+        .data-table input {
+            width: 100%;
+            padding: 2px 4px;
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            font-size: 12px;
+        }
+        
+        .add-row {
+            display: flex;
+            align-items: center;
+            color: var(--qt-highlight-color);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        
+        .add-row-icon {
+            margin-right: 4px;
+        }
+        
+        .table-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+        
+        /* 状态栏 */
+        .status-bar {
+            background-color: var(--qt-control-bg);
+            border-top: 1px solid var(--qt-border-color);
+            padding: 2px 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--qt-text-light);
+        }
+        
+        .status-section {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-indicator.online {
+            background-color: var(--qt-success-color);
+        }
+        
+        .status-divider {
+            margin: 0 8px;
+            color: var(--qt-border-color);
+        }
+        
+        /* 通用按钮 */
+        .btn {
+            padding: 4px 8px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .btn-primary {
+            background-color: var(--qt-highlight-color);
+            color: white;
+            border-color: var(--qt-highlight-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #0069c0;
+        }
+        
+        .btn-icon {
+            margin-right: 4px;
+        }
+        
+        .btn + .btn {
+            margin-left: 6px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 菜单栏 -->
+    <div class="menu-bar">
+        <div class="menu-item">文件</div>
+        <div class="menu-item">编辑</div>
+        <div class="menu-item">视图</div>
+        <div class="menu-item">工具</div>
+        <div class="menu-item">窗口</div>
+        <div class="menu-item">帮助</div>
+    </div>
+    
+    <!-- 工具栏 -->
+    <div class="toolbar">
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📁</span>
+            <span>打开</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">💾</span>
+            <span>保存</span>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📥</span>
+            <span>导入</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📤</span>
+            <span>导出</span>
+        </button>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <!-- 左侧树形菜单 -->
+        <div class="sidebar">
+            <div class="tree-menu">
+                <div class="tree-item">
+                    <span class="tree-icon">🏠</span>
+                    <span>首页</span>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▼</span>
+                    <span class="tree-icon">📋</span>
+                    <span>材质管理</span>
+                </div>
+                <div class="tree-children">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>基础材质</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>复合材质</span>
+                    </div>
+                    <div class="tree-item active">
+                        <span class="tree-icon"></span>
+                        <span>光谱数据</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">📁</span>
+                    <span>PSD处理</span>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">⚙️</span>
+                    <span>计算与输出</span>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">👥</span>
+                    <span>系统管理</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧内容区域 -->
+        <div class="content-area">
+            <!-- 标题栏 -->
+            <div class="content-header">
+                <h1 class="page-title">光谱数据管理</h1>
+                <div class="header-actions">
+                    <button class="btn">
+                        <span class="btn-icon">📤</span>
+                        <span>导出数据</span>
+                    </button>
+                    <button class="btn btn-primary">
+                        <span class="btn-icon">📥</span>
+                        <span>批量导入</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 信息提示 -->
+            <div class="info-panel">
+                <div class="info-title">关于光谱数据</div>
+                <div class="info-content">
+                    光谱数据是描述材质在不同波长下的反射率和发射率特性的关键数据。这些数据用于计算材质的辐射特性和热辐射行为。您可以通过表格方式直接编辑光谱数据，也可以从CSV、Excel或实验测量数据文件中导入。系统支持可视化光谱曲线，帮助您直观地理解材质的光谱特性。
+                </div>
+            </div>
+            
+            <!-- 搜索和筛选 -->
+            <div class="search-filter-bar">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索材质名称、类别或标签...">
+                    <button class="search-btn">🔍</button>
+                </div>
+                <div class="filter-dropdown">
+                    <span class="filter-icon">🔢</span>
+                    <span>材质类型</span>
+                    <span>▼</span>
+                </div>
+            </div>
+            
+            <!-- 工作区 -->
+            <div class="work-area">
+                <!-- 左侧材质面板 -->
+                <div class="material-panel">
+                    <div class="panel-header">
+                        <span>材质列表</span>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="刷新">🔄</button>
+                            <button class="panel-btn" title="排序">🔢</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="material-list">
+                            <li class="material-item selected">
+                                <div class="material-name">铝合金A7075</div>
+                                <div class="material-info">
+                                    <span class="material-info-item">基础材质</span>
+                                    <span class="material-info-item">数据点: 12</span>
+                                </div>
+                            </li>
+                            <li class="material-item">
+                                <div class="material-name">石墨纤维</div>
+                                <div class="material-info">
+                                    <span class="material-info-item">基础材质</span>
+                                    <span class="material-info-item">数据点: 18</span>
+                                </div>
+                            </li>
+                            <li class="material-item">
+                                <div class="material-name">混凝土C30</div>
+                                <div class="material-info">
+                                    <span class="material-info-item">基础材质</span>
+                                    <span class="material-info-item">数据点: 15</span>
+                                </div>
+                            </li>
+                            <li class="material-item">
+                                <div class="material-name">玻璃纤维</div>
+                                <div class="material-info">
+                                    <span class="material-info-item">基础材质</span>
+                                    <span class="material-info-item">数据点: 20</span>
+                                </div>
+                            </li>
+                            <li class="material-item">
+                                <div class="material-name">聚四氟乙烯</div>
+                                <div class="material-info">
+                                    <span class="material-info-item">基础材质</span>
+                                    <span class="material-info-item">数据点: 16</span>
+                                </div>
+                            </li>
+                            <li class="material-item">
+                                <div class="material-name">不锈钢316L</div>
+                                <div class="material-info">
+                                    <span class="material-info-item">基础材质</span>
+                                    <span class="material-info-item">数据点: 14</span>
+                                </div>
+                            </li>
+                            <li class="material-item">
+                                <div class="material-name">钛合金TC4</div>
+                                <div class="material-info">
+                                    <span class="material-info-item">基础材质</span>
+                                    <span class="material-info-item">数据点: 12</span>
+                                </div>
+                            </li>
+                            <li class="material-item">
+                                <div class="material-name">碳纤维复合板</div>
+                                <div class="material-info">
+                                    <span class="material-info-item">复合材质</span>
+                                    <span class="material-info-item">计算值</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 导入区域 -->
+                    <div class="import-area">
+                        <div class="import-title">数据导入</div>
+                        <div class="drop-zone">
+                            <div class="drop-icon">📥</div>
+                            <div class="drop-text">拖放文件或点击此处</div>
+                            <div class="file-formats">支持的格式: CSV, Excel, TXT</div>
+                        </div>
+                        
+                        <div style="margin-top: 8px;">
+                            <label for="import-option" style="display: block; margin-bottom: 4px; font-size: 12px;">导入选项:</label>
+                            <select id="import-option" style="width: 100%; padding: 3px; font-size: 12px; border: 1px solid var(--qt-border-color); border-radius: 2px;">
+                                <option>添加到当前材质</option>
+                                <option>覆盖当前材质数据</option>
+                                <option>作为新材质导入</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+                            <button class="btn">
+                                <span class="btn-icon">⚙️</span>
+                                <span>高级选项</span>
+                            </button>
+                            <button class="btn btn-primary">
+                                <span class="btn-icon">📥</span>
+                                <span>导入</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧光谱编辑面板 -->
+                <div class="spectral-panel">
+                    <div class="tab-bar">
+                        <div class="tab active">光谱曲线</div>
+                        <div class="tab">数据表格</div>
+                        <div class="tab">分析工具</div>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <!-- 图表控制 -->
+                        <div class="chart-controls">
+                            <div class="control-group">
+                                <span class="control-label">X轴:</span>
+                                <select class="control-select">
+                                    <option>波长 (μm)</option>
+                                    <option>频率 (THz)</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <span class="control-label">Y轴:</span>
+                                <select class="control-select">
+                                    <option>反射率和发射率</option>
+                                    <option>仅反射率</option>
+                                    <option>仅发射率</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <span class="control-label">比例:</span>
+                                <select class="control-select">
+                                    <option>线性</option>
+                                    <option>对数</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- 光谱图表 -->
+                        <div class="chart-container">
+                            <svg width="100%" height="100%" viewBox="0 0 600 250">
+                                <!-- 坐标轴 -->
+                                <line x1="50" y1="200" x2="550" y2="200" stroke="#d0d0d0" stroke-width="1" />
+                                <line x1="50" y1="50" x2="50" y2="200" stroke="#d0d0d0" stroke-width="1" />
+                                
+                                <!-- 网格线 -->
+                                <line x1="50" y1="50" x2="550" y2="50" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="2,2" />
+                                <line x1="50" y1="100" x2="550" y2="100" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="2,2" />
+                                <line x1="50" y1="150" x2="550" y2="150" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="2,2" />
+                                
+                                <line x1="150" y1="50" x2="150" y2="200" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="2,2" />
+                                <line x1="250" y1="50" x2="250" y2="200" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="2,2" />
+                                <line x1="350" y1="50" x2="350" y2="200" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="2,2" />
+                                <line x1="450" y1="50" x2="450" y2="200" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="2,2" />
+                                
+                                <!-- 刻度 -->
+                                <text x="45" y="200" text-anchor="end" font-size="10" fill="#505050">0</text>
+                                <text x="45" y="150" text-anchor="end" font-size="10" fill="#505050">0.5</text>
+                                <text x="45" y="100" text-anchor="end" font-size="10" fill="#505050">0.8</text>
+                                <text x="45" y="50" text-anchor="end" font-size="10" fill="#505050">1.0</text>
+                                
+                                <text x="50" y="215" text-anchor="middle" font-size="10" fill="#505050">0</text>
+                                <text x="150" y="215" text-anchor="middle" font-size="10" fill="#505050">4</text>
+                                <text x="250" y="215" text-anchor="middle" font-size="10" fill="#505050">8</text>
+                                <text x="350" y="215" text-anchor="middle" font-size="10" fill="#505050">12</text>
+                                <text x="450" y="215" text-anchor="middle" font-size="10" fill="#505050">16</text>
+                                
+                                <!-- 轴标签 -->
+                                <text x="300" y="235" text-anchor="middle" font-size="11" fill="#505050">波长 (μm)</text>
+                                <text x="20" y="125" text-anchor="middle" font-size="11" fill="#505050" transform="rotate(-90, 20, 125)">反射率/发射率</text>
+                                
+                                <!-- 数据曲线 -->
+                                <path d="M 50,160 L 150,155 250,140 350,120 450,130 550,120" stroke="#0078d7" stroke-width="2" fill="none" />
+                                <path d="M 50,90 L 150,95 250,110 350,130 450,120 550,130" stroke="#38a169" stroke-width="2" fill="none" />
+                                
+                                <!-- 图例 -->
+                                <rect x="450" y="30" width="12" height="4" fill="#0078d7" />
+                                <text x="470" y="34" font-size="10" fill="#505050">反射率</text>
+                                
+                                <rect x="450" y="45" width="12" height="4" fill="#38a169" />
+                                <text x="470" y="49" font-size="10" fill="#505050">发射率</text>
+                                
+                                <!-- 标题 -->
+                                <text x="300" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#202020">铝合金A7075的光谱特性曲线</text>
+                            </svg>
+                        </div>
+                        
+                        <!-- 数据表格 -->
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th width="30%">波长 (μm)</th>
+                                        <th width="30%">光谱反射率</th>
+                                        <th width="30%">光谱发射率</th>
+                                        <th width="10%">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="number" value="2.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.88" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.12" step="0.01" min="0" max="1"></td>
+                                        <td><button class="panel-btn">🗑️</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" value="4.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.85" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.15" step="0.01" min="0" max="1"></td>
+                                        <td><button class="panel-btn">🗑️</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" value="6.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.82" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.18" step="0.01" min="0" max="1"></td>
+                                        <td><button class="panel-btn">🗑️</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" value="8.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.80" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.20" step="0.01" min="0" max="1"></td>
+                                        <td><button class="panel-btn">🗑️</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" value="10.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.83" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.17" step="0.01" min="0" max="1"></td>
+                                        <td><button class="panel-btn">🗑️</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" value="12.0" step="0.1" min="0"></td>
+                                        <td><input type="number" value="0.87" step="0.01" min="0" max="1"></td>
+                                        <td><input type="number" value="0.13" step="0.01" min="0" max="1"></td>
+                                        <td><button class="panel-btn">🗑️</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                                <button class="add-row">
+                                    <span class="add-row-icon">+</span>
+                                    <span>添加数据点</span>
+                                </button>
+                                <div style="font-size: 11px; color: var(--qt-text-light);">
+                                    总数据点: <span style="font-weight: bold;">6</span>
+                                </div>
+                            </div>
+                            
+                            <p style="font-size: 11px; color: var(--qt-text-light); margin-top: 8px;">
+                                注意: 对于每个波长，光谱反射率和发射率之和应为1。系统会自动验证并提示不符合物理规律的数据。
+                            </p>
+                            
+                            <div class="table-actions">
+                                <button class="btn">
+                                    <span class="btn-icon">🔄</span>
+                                    <span>重置</span>
+                                </button>
+                                <button class="btn">
+                                    <span class="btn-icon">📊</span>
+                                    <span>插值工具</span>
+                                </button>
+                                <button class="btn btn-primary">
+                                    <span class="btn-icon">💾</span>
+                                    <span>保存数据</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <div class="status-section">
+            <div class="status-indicator online"></div>
+            <span>系统运行正常</span>
+            <span class="status-divider">|</span>
+            <span>当前材质: 铝合金A7075</span>
+            <span class="status-divider">|</span>
+            <span>数据点: 6</span>
+        </div>
+        <div class="status-section">
+            <span>材质管理器系统 v1.2.0</span>
+        </div>
+    </div>
+</body>
+</html>

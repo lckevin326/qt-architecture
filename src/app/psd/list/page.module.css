@@ -1,0 +1,139 @@
+.container {
+  padding: 20px;
+  height: 100%;
+  overflow: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.primaryButton {
+  background-color: var(--qt-primary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.importButton {
+  background-color: var(--qt-primary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.importButton:hover {
+  background-color: var(--qt-primary-hover-color);
+}
+
+.importButton .icon {
+  font-size: 16px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 20px;
+}
+
+.search {
+  flex: 1;
+}
+
+.search input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+}
+
+.filters select {
+  padding: 8px;
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+  min-width: 120px;
+}
+
+.tableContainer {
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--qt-border-color);
+}
+
+.table th {
+  background-color: var(--qt-control-bg);
+  font-weight: normal;
+}
+
+.table tr:hover {
+  background-color: var(--qt-hover-bg);
+}
+
+.processButton,
+.deleteButton {
+  padding: 4px 8px;
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+  background: none;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.processButton:hover {
+  background-color: var(--qt-primary-color);
+  color: white;
+  border-color: var(--qt-primary-color);
+}
+
+.deleteButton:hover {
+  background-color: var(--qt-danger-color);
+  color: white;
+  border-color: var(--qt-danger-color);
+}
+
+.status-未处理 {
+  color: var(--qt-text-light);
+}
+
+.status-处理中 {
+  color: var(--qt-primary-color);
+}
+
+.status-已完成 {
+  color: var(--qt-success-color);
+}
+

@@ -1,0 +1,37 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.controlGroup {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.controlLabel {
+  margin-right: 4px;
+}
+
+.controlSelect {
+  border: 1px solid var(--qt-border-color);
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-size: 12px;
+}
+
+.chartContainer {
+  flex: 1;
+  min-height: 250px;
+  border: 1px solid var(--qt-border-color);
+  background-color: var(--qt-bg-color);
+  padding: 16px;
+}

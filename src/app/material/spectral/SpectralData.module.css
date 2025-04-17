@@ -1,0 +1,233 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--qt-bg-color);
+}
+
+.toolbar {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--qt-border-color);
+  background-color: var(--qt-control-bg);
+  display: flex;
+  align-items: center;
+}
+
+.toolbarBtn {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 2px;
+}
+
+.toolbarBtn:hover {
+  background-color: var(--qt-highlight-light);
+}
+
+.toolbarBtnIcon {
+  margin-right: 4px;
+}
+
+.toolbarSeparator {
+  width: 1px;
+  height: 16px;
+  background-color: var(--qt-border-color);
+  margin: 0 8px;
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  padding: 16px;
+  gap: 16px;
+  min-height: 0;
+}
+
+.materialPanel {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--qt-border-color);
+  background-color: var(--qt-control-bg);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.panelHeader {
+  background-color: var(--qt-highlight-light);
+  padding: 6px 8px;
+  font-weight: bold;
+  border-bottom: 1px solid var(--qt-border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.panelActions {
+  display: flex;
+}
+
+.panelBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  margin-left: 4px;
+  font-size: 13px;
+}
+
+.panelBtn:hover {
+  color: var(--qt-highlight-color);
+}
+
+.panelBody {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.materialList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.materialItem {
+  padding: 8px;
+  border-bottom: 1px solid var(--qt-border-color);
+  cursor: pointer;
+}
+
+.materialItem:hover {
+  background-color: var(--qt-highlight-light);
+}
+
+.materialItem.selected {
+  background-color: var(--qt-highlight-color);
+  color: white;
+}
+
+.materialName {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.materialInfo {
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--qt-text-light);
+}
+
+.importArea {
+  padding: 12px;
+  border-top: 1px solid var(--qt-border-color);
+}
+
+.importTitle {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.dropZone {
+  border: 1px dashed var(--qt-border-color);
+  padding: 12px;
+  text-align: center;
+  background-color: var(--qt-bg-color);
+  cursor: pointer;
+}
+
+.dropZone:hover {
+  border-color: var(--qt-highlight-color);
+  background-color: var(--qt-highlight-light);
+}
+
+.dropIcon {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: var(--qt-text-light);
+}
+
+.dropText {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.fileFormats {
+  font-size: 11px;
+  color: var(--qt-text-light);
+}
+
+.spectralPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--qt-border-color);
+  background-color: var(--qt-control-bg);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.tabBar {
+  display: flex;
+  border-bottom: 1px solid var(--qt-border-color);
+}
+
+.tab {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  border-right: 1px solid var(--qt-border-color);
+}
+
+.tab:hover {
+  background-color: var(--qt-highlight-light);
+}
+
+.tab.active {
+  background-color: var(--qt-highlight-color);
+  color: white;
+}
+
+.tabContent {
+  flex: 1;
+  padding: 16px;
+  overflow: auto;
+}
+
+.statusBar {
+  height: 24px;
+  border-top: 1px solid var(--qt-border-color);
+  background-color: var(--qt-control-bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.statusSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.statusIndicator.online {
+  background-color: #4caf50;
+}
+
+.statusDivider {
+  color: var(--qt-border-color);
+}
+

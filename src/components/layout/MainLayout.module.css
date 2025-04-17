@@ -1,0 +1,130 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* 菜单栏 */
+.menuBar {
+  background-color: var(--qt-control-bg);
+  color: var(--qt-text-color);
+  border-bottom: 1px solid var(--qt-border-color);
+  padding: 2px 0;
+  display: flex;
+  align-items: center;
+}
+
+.menuItem {
+  padding: 4px 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.menuItem:hover {
+  background-color: var(--qt-menu-hover);
+  border: 1px solid var(--qt-border-color);
+}
+
+/* 工具栏 */
+.toolbar {
+  background-color: var(--qt-control-bg);
+  border-bottom: 1px solid var(--qt-border-color);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.toolbarBtn {
+  padding: 3px 8px;
+  margin-right: 4px;
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+}
+
+.toolbarBtn:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.toolbarBtnIcon {
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+.toolbarSeparator {
+  width: 1px;
+  height: 18px;
+  background-color: var(--qt-border-color);
+  margin: 0 8px;
+}
+
+/* 主内容区域 */
+.mainContent {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 侧边栏 */
+.sidebar {
+  width: 220px;
+  background-color: var(--qt-control-bg);
+  border-right: 1px solid var(--qt-border-color);
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.treeMenu {
+  padding: 4px;
+}
+
+.treeItem {
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+  margin: 2px 0;
+}
+
+.treeItem:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+/* 内容区域 */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  background-color: var(--qt-bg-color);
+}
+
+/* 状态栏 */
+.statusBar {
+  background-color: var(--qt-control-bg);
+  border-top: 1px solid var(--qt-border-color);
+  padding: 2px 8px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--qt-text-light);
+}
+
+.statusSection {
+  display: flex;
+  align-items: center;
+}
+
+.statusIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--qt-success-color);
+  margin-right: 5px;
+}
+
+.statusDivider {
+  margin: 0 8px;
+  color: var(--qt-border-color);
+}

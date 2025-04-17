@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 材质管理器系统 - 前端展示项目
 
-## Getting Started
+## 项目概述
 
-First, run the development server:
+本项目是一个基于QT风格设计的材质管理器系统前端展示Demo，主要用于展示材质管理（基础材质、复合材质、光谱数据）、PSD处理和系统管理等功能的用户界面。项目采用HTML/CSS实现，不涉及后端功能，仅作为界面展示和交互设计参考。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 项目目标
+
+1. 展示一个符合QT风格的桌面应用界面
+2. 提供材质管理、PSD处理和系统管理等功能的界面设计
+3. 实现基础的用户交互效果
+4. 作为后续开发的UI参考和原型
+
+## 项目结构
+
+```
+├── docs/                 # 文档文件（待开发）
+└── QT-html/              # HTML原型文件（仅供参考）
+    ├── qt-homepage-design.html            # 首页设计
+    ├── qt-basic-material-page.html        # 基础材质管理页面
+    ├── qt-composite-material-page.html    # 复合材质管理页面
+    ├── qt-composite-material-edit.html    # 复合材质编辑页面
+    ├── qt-material-edit-page.html         # 材质编辑页面
+    ├── qt-spectral-data-page.html         # 光谱数据页面
+    ├── qt-psd-processing-page.html        # PSD处理页面
+    ├── qt-calculation-page.html           # 计算参数设置页面
+    ├── qt-texture-output-page.html        # 纹理输出页面
+    ├── qt-user-management-page.html       # 用户管理页面
+    └── qt-permission-settings-page.html   # 权限设置页面
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 功能模块
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. 登录页面
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 提供用户登录功能
+- 简洁的QT风格登录界面
 
-## Learn More
+### 2. 首页
 
-To learn more about Next.js, take a look at the following resources:
+- 提供系统概览和快速访问各功能模块的入口
+- 显示最近活动记录
+- 包含基础材质、复合材质、光谱数据、PSD处理和系统管理等主要功能模块的快捷入口
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. 材质管理
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### 3.1 基础材质管理
 
-## Deploy on Vercel
+- 基础材质的列表展示、搜索和筛选
+- 支持创建、编辑、删除基础材质
+- 材质属性包括：材质名称、平均温度、总发射率、调制因子、光谱发射率、光谱反射率
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### 3.2 复合材质管理
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 复合材质的列表展示和管理
+- 支持创建和编辑复合材质
+- 复合材质是真实环境中各对象表面由多种基础材质按比例线性光谱混合而成的材质
+- 数据包括：材质名称、平均温度、总发射率、调制因子、各基础材质占比
+
+#### 3.3 光谱数据
+
+- 管理材质的光谱数据
+- 支持数据可视化展示
+- 光谱数据的导入和导出
+
+### 4. PSD处理
+
+- PSD文件导入和简化的图层解析
+- 简化的图层结构展示
+- 基本的图层与材质关联设置
+- 简化的图层预览功能
+
+### 5. 系统管理
+
+#### 5.1 用户管理
+
+- 用户账户管理界面
+- 用户信息的增删改查
+- 用户状态管理
+
+#### 5.2 权限设置
+
+- 角色权限配置
+- 功能模块权限设置
+- 权限分配与管理
+
+## 设计风格
+
+项目采用QT风格设计，具有以下特点：
+
+- 扁平化但保留轻微的立体感
+- 中性保守的配色方案
+- 紧凑的布局和较小的字体
+- 清晰的视觉层次
+- 符合桌面应用的交互习惯
+
+## 界面组件
+
+- 简化的菜单栏和工具栏
+- 树形导航菜单（仅包含核心功能）
+- 表格和列表视图
+- 表单控件（输入框、下拉菜单、滑块等）
+- 分组框和折叠面板
+- 状态栏
+
+## 开发计划
+
+1. 基于QT-html文件夹中的原型图设计新的简化HTML页面
+2. 在app目录下开发新的HTML页面，包括登录页面
+3. 实现基础的前端交互功能
+4. 不集成后端API，仅实现前端页面展示
+
+## 使用说明
+
+当前阶段，项目包含参考用的HTML原型文件，可以通过浏览器直接打开查看界面设计。后续将在app目录下开发新的HTML页面。
+
+## 注意事项
+
+- 本项目仅为前端展示Demo，不包含实际功能
+- QT-html文件夹下的原型图功能过于复杂，将进行简化
+- PSD处理功能需要简化，去除计算参数相关功能
+- 菜单结构将简化，仅保留核心功能
+- 所有数据均为模拟数据，仅用于展示

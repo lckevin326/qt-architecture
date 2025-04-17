@@ -1,0 +1,64 @@
+.menuBar {
+  background-color: var(--qt-control-bg);
+  border-bottom: 1px solid var(--qt-border-color);
+  padding: 2px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menuLeft {
+  display: flex;
+  align-items: center;
+}
+
+.menuRight {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.menuItem {
+  padding: 4px 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.menuItem:hover {
+  background-color: var(--qt-menu-hover);
+  border: 1px solid var(--qt-border-color);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.userInfo:hover {
+  background-color: var(--qt-menu-hover);
+  border: 1px solid var(--qt-border-color);
+}
+
+.userIcon {
+  margin-right: 6px;
+  font-size: 14px;
+}
+
+.userName {
+  margin-right: 4px;
+  font-size: 13px;
+}
+
+.separator {
+  width: 1px;
+  height: 16px;
+  background-color: var(--qt-border-color);
+  margin: 0 8px;
+}
+
+.logoutBtn {
+  color: var(--qt-danger-color);
+}

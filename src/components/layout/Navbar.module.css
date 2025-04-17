@@ -1,0 +1,51 @@
+.navbar {
+  background-color: var(--qt-control-bg);
+  border-bottom: 1px solid var(--qt-border-color);
+  user-select: none;
+}
+
+.menuBar {
+  display: flex;
+  padding: 2px 8px;
+  border-bottom: 1px solid var(--qt-border-color);
+}
+
+.menuItem {
+  padding: 2px 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.menuItem:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  gap: 4px;
+}
+
+.toolButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.toolButton:hover {
+  background-color: var(--qt-menu-hover);
+}
+
+.separator {
+  width: 1px;
+  height: 18px;
+  background-color: var(--qt-border-color);
+  margin: 0 4px;
+}

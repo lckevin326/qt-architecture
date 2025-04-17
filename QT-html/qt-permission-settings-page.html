@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>材质管理器系统 - 权限设置</title>
+    <style>
+        :root {
+            /* QT风格配色 */
+            --qt-bg-color: #f5f5f5;
+            --qt-control-bg: #ffffff;
+            --qt-highlight-color: #0078d7;
+            --qt-highlight-light: #e5f1fb;
+            --qt-text-color: #202020;
+            --qt-text-light: #505050;
+            --qt-text-disabled: #a0a0a0;
+            --qt-border-color: #d0d0d0;
+            --qt-menu-hover: #e5e5e5;
+            --qt-success-color: #2ecc71;
+            --qt-warning-color: #f39c12;
+            --qt-danger-color: #e74c3c;
+            --qt-checkbox-color: #0078d7;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            font-size: 13px;
+        }
+        
+        body {
+            background-color: var(--qt-bg-color);
+            color: var(--qt-text-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        /* 菜单栏 */
+        .menu-bar {
+            background-color: var(--qt-control-bg);
+            color: var(--qt-text-color);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 2px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-item {
+            padding: 4px 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--qt-menu-hover);
+            border: 1px solid var(--qt-border-color);
+        }
+        
+        /* 工具栏 */
+        .toolbar {
+            background-color: var(--qt-control-bg);
+            border-bottom: 1px solid var(--qt-border-color);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toolbar-btn {
+            padding: 3px 8px;
+            margin-right: 4px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-radius: 2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toolbar-btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .toolbar-btn-icon {
+            margin-right: 4px;
+            font-size: 14px;
+        }
+        
+        .toolbar-separator {
+            width: 1px;
+            height: 18px;
+            background-color: var(--qt-border-color);
+            margin: 0 8px;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        /* 左侧边栏菜单 - QT风格 */
+        .sidebar {
+            width: 220px;
+            background-color: var(--qt-control-bg);
+            border-right: 1px solid var(--qt-border-color);
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        
+        .tree-menu {
+            padding: 4px;
+        }
+        
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 3px 8px;
+            cursor: pointer;
+        }
+        
+        .tree-item:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .tree-item.active {
+            background-color: var(--qt-highlight-light);
+            color: var(--qt-highlight-color);
+            font-weight: bold;
+        }
+        
+        .tree-expand-icon {
+            margin-right: 4px;
+            font-size: 10px;
+            width: 10px;
+        }
+        
+        .tree-icon {
+            margin-right: 4px;
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .tree-children {
+            margin-left: 16px;
+        }
+        
+        /* 面包屑导航 */
+        .breadcrumb {
+            background-color: var(--qt-bg-color);
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--qt-border-color);
+            font-size: 12px;
+        }
+        
+        .breadcrumb-item {
+            cursor: pointer;
+            color: var(--qt-highlight-color);
+        }
+        
+        .breadcrumb-separator {
+            color: var(--qt-text-light);
+            margin: 0 5px;
+        }
+        
+        .breadcrumb-current {
+            color: var(--qt-text-color);
+        }
+        
+        /* 右侧内容区 */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* 内容标题与操作栏 */
+        .content-header {
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--qt-control-bg);
+            border-bottom: 1px solid var(--qt-border-color);
+        }
+        
+        .content-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .content-actions {
+            display: flex;
+            gap: 6px;
+        }
+        
+        /* 主工作区域 */
+        .workspace-container {
+            flex: 1;
+            overflow: auto;
+            padding: 8px;
+        }
+        
+        /* 权限管理工作区 */
+        .permission-workspace {
+            display: flex;
+            height: 100%;
+            gap: 8px;
+        }
+        
+        /* 角色列表面板 */
+        .roles-panel {
+            width: 250px;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-header {
+            padding: 6px;
+            background-color: var(--qt-bg-color);
+            border-bottom: 1px solid var(--qt-border-color);
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .roles-list {
+            list-style: none;
+        }
+        
+        .role-item {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--qt-border-color);
+            cursor: pointer;
+        }
+        
+        .role-item:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .role-item.active {
+            background-color: var(--qt-highlight-light);
+            color: var(--qt-highlight-color);
+            border-left: 2px solid var(--qt-highlight-color);
+        }
+        
+        .role-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .role-description {
+            font-size: 11px;
+            color: var(--qt-text-light);
+        }
+        
+        .role-user-badge {
+            display: inline-block;
+            padding: 1px 4px;
+            background-color: var(--qt-highlight-light);
+            color: var(--qt-highlight-color);
+            border-radius: 2px;
+            font-size: 10px;
+            margin-left: 4px;
+        }
+        
+        .panel-footer {
+            padding: 6px;
+            border-top: 1px solid var(--qt-border-color);
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* 权限设置面板 */
+        .permissions-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 选项卡 */
+        .tabs-container {
+            display: flex;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            border-bottom: none;
+        }
+        
+        .tab {
+            padding: 6px 12px;
+            cursor: pointer;
+            border-right: 1px solid var(--qt-border-color);
+        }
+        
+        .tab:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .tab.active {
+            background-color: var(--qt-highlight-light);
+            color: var(--qt-highlight-color);
+            font-weight: bold;
+        }
+        
+        /* 权限内容区 */
+        .permission-content {
+            flex: 1;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            padding: 8px;
+            overflow-y: auto;
+        }
+        
+        .permission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .permission-title {
+            font-weight: bold;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .permission-title-icon {
+            margin-right: 4px;
+        }
+        
+        .permission-switch {
+            display: flex;
+            align-items: center;
+        }
+        
+        .switch-label {
+            margin-left: 4px;
+            font-size: 12px;
+        }
+        
+        /* 权限分组 */
+        .permission-section {
+            margin-bottom: 16px;
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-bg-color);
+        }
+        
+        .section-header {
+            padding: 6px 8px;
+            background-color: var(--qt-bg-color);
+            border-bottom: 1px solid var(--qt-border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-icon {
+            margin-right: 4px;
+        }
+        
+        .toggle-all {
+            color: var(--qt-highlight-color);
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        
+        .section-content {
+            padding: 8px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px;
+        }
+        
+        /* 权限项目 */
+        .permission-item {
+            display: flex;
+            align-items: flex-start;
+            background-color: var(--qt-control-bg);
+            border: 1px solid var(--qt-border-color);
+            padding: 6px;
+        }
+        
+        .permission-checkbox {
+            margin-right: 6px;
+            margin-top: 2px;
+        }
+        
+        .permission-info {
+            flex: 1;
+        }
+        
+        .permission-name {
+            font-weight: 500;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+        
+        .permission-desc {
+            font-size: 11px;
+            color: var(--qt-text-light);
+        }
+        
+        /* 菜单权限树 */
+        .menu-tree {
+            margin-top: 8px;
+        }
+        
+        .menu-node {
+            display: flex;
+            align-items: center;
+            padding: 4px;
+            border: 1px solid var(--qt-border-color);
+            margin-bottom: 2px;
+            background-color: var(--qt-control-bg);
+        }
+        
+        .menu-toggle {
+            margin-right: 4px;
+            font-size: 10px;
+            width: 12px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .menu-checkbox {
+            margin-right: 6px;
+        }
+        
+        .menu-name {
+            flex: 1;
+            font-size: 12px;
+        }
+        
+        .menu-children {
+            margin-left: 20px;
+        }
+        
+        /* 表单组件 */
+        .form-group {
+            margin-bottom: 10px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-control-bg);
+            font-size: 12px;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--qt-highlight-color);
+            outline: none;
+        }
+        
+        .form-help {
+            font-size: 11px;
+            color: var(--qt-text-light);
+            margin-top: 2px;
+        }
+        
+        .form-textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        
+        /* 权限面板底部 */
+        .permission-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            background-color: var(--qt-bg-color);
+            border-top: 1px solid var(--qt-border-color);
+            font-size: 11px;
+            margin-top: 8px;
+        }
+        
+        .footer-info {
+            color: var(--qt-text-light);
+        }
+        
+        .footer-value {
+            color: var(--qt-highlight-color);
+            font-weight: bold;
+        }
+        
+        /* 按钮 */
+        .btn {
+            padding: 3px 8px;
+            border: 1px solid var(--qt-border-color);
+            background-color: var(--qt-control-bg);
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .btn:hover {
+            background-color: var(--qt-menu-hover);
+        }
+        
+        .btn-primary {
+            background-color: var(--qt-highlight-color);
+            color: white;
+            border-color: var(--qt-highlight-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #0068c2;
+        }
+        
+        .btn-icon {
+            margin-right: 4px;
+            font-size: 12px;
+        }
+        
+        /* 状态栏 */
+        .status-bar {
+            background-color: var(--qt-control-bg);
+            border-top: 1px solid var(--qt-border-color);
+            padding: 2px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+        }
+        
+        .status-item {
+            margin-right: 12px;
+            color: var(--qt-text-light);
+        }
+        
+        /* 数据权限表格 */
+        .data-scope-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+        }
+        
+        .data-scope-table th, 
+        .data-scope-table td {
+            padding: 6px 8px;
+            border: 1px solid var(--qt-border-color);
+            text-align: left;
+            font-size: 12px;
+        }
+        
+        .data-scope-table th {
+            background-color: var(--qt-bg-color);
+            font-weight: bold;
+        }
+        
+        .radio-label {
+            display: flex;
+            align-items: center;
+        }
+        
+        .radio-label input {
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 菜单栏 - QT风格 -->
+    <div class="menu-bar">
+        <div class="menu-item">文件</div>
+        <div class="menu-item">编辑</div>
+        <div class="menu-item">视图</div>
+        <div class="menu-item">工具</div>
+        <div class="menu-item">管理</div>
+        <div class="menu-item">帮助</div>
+    </div>
+    
+    <!-- 工具栏 - QT风格 -->
+    <div class="toolbar">
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">💾</span>
+            <span>保存</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">🔄</span>
+            <span>刷新</span>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">➕</span>
+            <span>新增角色</span>
+        </button>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">✏️</span>
+            <span>编辑角色</span>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn">
+            <span class="toolbar-btn-icon">📤</span>
+            <span>导出配置</span>
+        </button>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <!-- 左侧树形菜单 - QT风格 -->
+        <div class="sidebar">
+            <div class="tree-menu">
+                <div class="tree-item">
+                    <span class="tree-icon">🏠</span>
+                    <span>首页</span>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">📋</span>
+                    <span>材质管理</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>基础材质</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>复合材质</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>光谱数据</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">📁</span>
+                    <span>PSD处理</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>导入PSD</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>图层管理</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>材质关联</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▶</span>
+                    <span class="tree-icon">⚙️</span>
+                    <span>计算与输出</span>
+                </div>
+                <div class="tree-children" style="display: none;">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>计算参数</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>纹理生成</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>导出设置</span>
+                    </div>
+                </div>
+                
+                <div class="tree-item">
+                    <span class="tree-expand-icon">▼</span>
+                    <span class="tree-icon">👥</span>
+                    <span>系统管理</span>
+                </div>
+                <div class="tree-children">
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>用户管理</span>
+                    </div>
+                    <div class="tree-item active">
+                        <span class="tree-icon"></span>
+                        <span>权限设置</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-icon"></span>
+                        <span>系统设置</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="content-area">
+            <!-- 面包屑导航 -->
+            <div class="breadcrumb">
+                <span class="breadcrumb-item">首页</span>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-item">系统管理</span>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-current">权限设置</span>
+            </div>
+            
+            <!-- 内容标题与操作栏 -->
+            <div class="content-header">
+                <h2 class="content-title">角色权限管理</h2>
+                <div class="content-actions">
+                    <button class="btn">
+                        <span class="btn-icon">📤</span>
+                        <span>导出配置</span>
+                    </button>
+                    <button class="btn-primary">
+                        <span class="btn-icon">💾</span>
+                        <span>保存配置</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 主工作区域 -->
+            <div class="workspace-container">
+                <div class="permission-workspace">
+                    <!-- 角色列表面板 -->
+                    <div class="roles-panel">
+                        <div class="panel-header">角色列表</div>
+                        <div class="panel-content">
+                            <ul class="roles-list">
+                                <li class="role-item">
+                                    <div class="role-name">系统管理员</div>
+                                    <div class="role-description">拥有系统所有权限，可以管理所有数据和功能</div>
+                                </li>
+                                <li class="role-item active">
+                                    <div class="role-name">工程师<span class="role-user-badge">1</span></div>
+                                    <div class="role-description">可以使用材质管理和PSD处理功能，具有计算和导出权限</div>
+                                </li>
+                                <li class="role-item">
+                                    <div class="role-name">研究员<span class="role-user-badge">1</span></div>
+                                    <div class="role-description">主要负责材质数据的维护和管理，具有光谱数据编辑权限</div>
+                                </li>
+                                <li class="role-item">
+                                    <div class="role-name">分析师<span class="role-user-badge">1</span></div>
+                                    <div class="role-description">执行PSD处理和辐射计算，生成分析结果</div>
+                                </li>
+                                <li class="role-item">
+                                    <div class="role-name">材质管理员<span class="role-user-badge">1</span></div>
+                                    <div class="role-description">专注于材质库管理，可以导入、导出和编辑材质数据</div>
+                                </li>
+                                <li class="role-item">
+                                    <div class="role-name">技术员<span class="role-user-badge">1</span></div>
+                                    <div class="role-description">执行基本的PSD处理和计算任务，权限受限</div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="panel-footer">
+                            <button class="btn">
+                                <span class="btn-icon">➕</span>
+                                <span>添加角色</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 权限设置面板 -->
+                    <div class="permissions-panel">
+                        <!-- 选项卡 -->
+                        <div class="tabs-container">
+                            <div class="tab active">基本信息</div>
+                            <div class="tab">功能权限</div>
+                            <div class="tab">菜单权限</div>
+                            <div class="tab">数据权限</div>
+                        </div>
+                        
+                        <!-- 权限内容区 - 基本信息 -->
+                        <div class="permission-content">
+                            <div class="permission-header">
+                                <div class="permission-title">
+                                    <span class="permission-title-icon">🔑</span>
+                                    <span>工程师角色</span>
+                                </div>
+                                <div class="permission-switch">
+                                    <input type="checkbox" id="role-enable" checked>
+                                    <label for="role-enable" class="switch-label">启用角色</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="role-name">角色名称</label>
+                                <input type="text" id="role-name" class="form-input" value="工程师">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="role-code">角色编码</label>
+                                <input type="text" id="role-code" class="form-input" value="ENGINEER">
+                                <div class="form-help">角色编码用于系统内部识别，通常使用英文大写字母</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="role-desc">角色描述</label>
+                                <textarea id="role-desc" class="form-textarea">工程师角色可以使用材质管理和PSD处理功能，负责执行辐射计算和生成纹理。具有材质编辑、PSD处理、计算设置和结果导出权限。</textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- 权限内容区 - 功能权限 (默认隐藏) -->
+                        <div class="permission-content" style="display: none;">
+                            <div class="permission-header">
+                                <div class="permission-title">
+                                    <span class="permission-title-icon">⚙️</span>
+                                    <span>功能权限</span>
+                                </div>
+                                <div class="permission-switch">
+                                    <input type="checkbox" id="features-enable" checked>
+                                    <label for="features-enable" class="switch-label">启用功能权限</label>
+                                </div>
+                            </div>
+                            
+                            <!-- 材质管理权限 -->
+                            <div class="permission-section">
+                                <div class="section-header">
+                                    <div class="section-title">
+                                        <span class="section-icon">📋</span>
+                                        <span>材质管理</span>
+                                    </div>
+                                    <span class="toggle-all">全选/取消</span>
+                                </div>
+                                <div class="section-content">
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-material-view" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-material-view">查看材质</label>
+                                            <div class="permission-desc">浏览材质库中的材质和属性</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-material-create" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-material-create">创建材质</label>
+                                            <div class="permission-desc">创建新的基础材质和复合材质</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-material-edit" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-material-edit">编辑材质</label>
+                                            <div class="permission-desc">修改现有材质的属性和数据</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-material-delete">
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-material-delete">删除材质</label>
+                                            <div class="permission-desc">从材质库中永久删除材质</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-material-import" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-material-import">导入材质</label>
+                                            <div class="permission-desc">从外部文件导入材质数据</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-material-export" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-material-export">导出材质</label>
+                                            <div class="permission-desc">将材质数据导出到外部文件</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- PSD处理权限 -->
+                            <div class="permission-section">
+                                <div class="section-header">
+                                    <div class="section-title">
+                                        <span class="section-icon">📁</span>
+                                        <span>PSD处理</span>
+                                    </div>
+                                    <span class="toggle-all">全选/取消</span>
+                                </div>
+                                <div class="section-content">
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-psd-import" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-psd-import">导入PSD</label>
+                                            <div class="permission-desc">导入PSD文件进行处理</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-psd-layers" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-psd-layers">管理图层</label>
+                                            <div class="permission-desc">查看和管理PSD图层结构</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-psd-material" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-psd-material">材质关联</label>
+                                            <div class="permission-desc">将图层与材质进行关联</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-psd-save" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-psd-save">保存方案</label>
+                                            <div class="permission-desc">保存图层-材质关联方案</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 计算权限 -->
+                            <div class="permission-section">
+                                <div class="section-header">
+                                    <div class="section-title">
+                                        <span class="section-icon">⚙️</span>
+                                        <span>计算与输出</span>
+                                    </div>
+                                    <span class="toggle-all">全选/取消</span>
+                                </div>
+                                <div class="section-content">
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-calc-params" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-calc-params">设置计算参数</label>
+                                            <div class="permission-desc">配置辐射计算的参数</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-calc-execute" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-calc-execute">执行计算</label>
+                                            <div class="permission-desc">启动和监控辐射计算过程</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-calc-advanced">
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-calc-advanced">高级计算选项</label>
+                                            <div class="permission-desc">使用高级计算模型和参数</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-texture-preview" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-texture-preview">预览纹理</label>
+                                            <div class="permission-desc">查看计算生成的纹理</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-texture-export" checked>
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-texture-export">导出纹理</label>
+                                            <div class="permission-desc">将生成的纹理导出为文件</div>
+                                        </div>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" class="permission-checkbox" id="perm-batch-export">
+                                        <div class="permission-info">
+                                            <label class="permission-name" for="perm-batch-export">批量导出</label>
+                                            <div class="permission-desc">批量处理和导出纹理文件</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="permission-footer">
+                                <div class="footer-info">
+                                    最后修改: <span class="footer-value">管理员 (2025-04-15 14:23)</span>
+                                </div>
+                                <button class="btn-primary">
+                                    <span class="btn-icon">💾</span>
+                                    <span>保存权限</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 权限内容区 - 菜单权限 (默认隐藏) -->
+                        <div class="permission-content" style="display: none;">
+                            <div class="permission-header">
+                                <div class="permission-title">
+                                    <span class="permission-title-icon">📃</span>
+                                    <span>菜单权限</span>
+                                </div>
+                                <div class="permission-switch">
+                                    <input type="checkbox" id="menu-enable" checked>
+                                    <label for="menu-enable" class="switch-label">启用菜单权限</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-help" style="margin-bottom: 12px;">
+                                为该角色配置可见和可访问的菜单项。未选中的菜单将对该角色的用户隐藏。
+                            </div>
+                            
+                            <div class="menu-tree">
+                                <!-- 首页菜单 -->
+                                <div class="menu-node">
+                                    <input type="checkbox" class="menu-checkbox" id="menu-home" checked>
+                                    <div class="menu-toggle">▶</div>
+                                    <label class="menu-name" for="menu-home">首页</label>
+                                </div>
+                                
+                                <!-- 材质管理菜单 -->
+                                <div class="menu-node">
+                                    <input type="checkbox" class="menu-checkbox" id="menu-material" checked>
+                                    <div class="menu-toggle">▼</div>
+                                    <label class="menu-name" for="menu-material">材质管理</label>
+                                </div>
+                                <div class="menu-children">
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-basic-material" checked>
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-basic-material">基础材质</label>
+                                    </div>
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-composite-material" checked>
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-composite-material">复合材质</label>
+                                    </div>
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-spectral-data" checked>
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-spectral-data">光谱数据</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- PSD处理菜单 -->
+                                <div class="menu-node">
+                                    <input type="checkbox" class="menu-checkbox" id="menu-psd" checked>
+                                    <div class="menu-toggle">▼</div>
+                                    <label class="menu-name" for="menu-psd">PSD处理</label>
+                                </div>
+                                <div class="menu-children">
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-psd-import" checked>
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-psd-import">导入PSD</label>
+                                    </div>
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-layer-manage" checked>
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-layer-manage">图层管理</label>
+                                    </div>
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-material-assoc" checked>
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-material-assoc">材质关联</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- 计算与输出菜单 -->
+                                <div class="menu-node">
+                                    <input type="checkbox" class="menu-checkbox" id="menu-calculation" checked>
+                                    <div class="menu-toggle">▼</div>
+                                    <label class="menu-name" for="menu-calculation">计算与输出</label>
+                                </div>
+                                <div class="menu-children">
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-calc-params" checked>
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-calc-params">计算参数</label>
+                                    </div>
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-texture-gen" checked>
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-texture-gen">纹理生成</label>
+                                    </div>
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-export-settings" checked>
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-export-settings">导出设置</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- 系统管理菜单 -->
+                                <div class="menu-node">
+                                    <input type="checkbox" class="menu-checkbox" id="menu-system">
+                                    <div class="menu-toggle">▼</div>
+                                    <label class="menu-name" for="menu-system">系统管理</label>
+                                </div>
+                                <div class="menu-children">
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-user-manage">
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-user-manage">用户管理</label>
+                                    </div>
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-permission-settings">
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-permission-settings">权限设置</label>
+                                    </div>
+                                    <div class="menu-node">
+                                        <input type="checkbox" class="menu-checkbox" id="menu-system-settings">
+                                        <div class="menu-toggle" style="visibility: hidden;">▶</div>
+                                        <label class="menu-name" for="menu-system-settings">系统设置</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="permission-footer">
+                                <div class="footer-info">
+                                    菜单项: <span class="footer-value">15/18</span> 已启用
+                                </div>
+                                <button class="btn-primary">
+                                    <span class="btn-icon">💾</span>
+                                    <span>保存菜单权限</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 权限内容区 - 数据权限 (默认隐藏) -->
+                        <div class="permission-content" style="display: none;">
+                            <div class="permission-header">
+                                <div class="permission-title">
+                                    <span class="permission-title-icon">📃</span>
+                                    <span>数据权限</span>
+                                </div>
+                                <div class="permission-switch">
+                                    <input type="checkbox" id="data-enable" checked>
+                                    <label for="data-enable" class="switch-label">启用数据权限</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-help" style="margin-bottom: 12px;">
+                                配置该角色可以访问的数据范围。数据权限控制用户可以看到的材质、PSD文件和计算结果等数据。
+                            </div>
+                            
+                            <table class="data-scope-table">
+                                <tr>
+                                    <th width="30%">数据类型</th>
+                                    <th width="70%">访问范围</th>
+                                </tr>
+                                <tr>
+                                    <td>材质数据</td>
+                                    <td>
+                                        <label class="radio-label">
+                                            <input type="radio" name="material-data-scope" checked> 所有材质
+                                        </label><br>
+                                        <label class="radio-label">
+                                            <input type="radio" name="material-data-scope"> 部门材质
+                                        </label><br>
+                                        <label class="radio-label">
+                                            <input type="radio" name="material-data-scope"> 个人材质
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>PSD文件</td>
+                                    <td>
+                                        <label class="radio-label">
+                                            <input type="radio" name="psd-data-scope" checked> 所有PSD文件
+                                        </label><br>
+                                        <label class="radio-label">
+                                            <input type="radio" name="psd-data-scope"> 部门PSD文件
+                                        </label><br>
+                                        <label class="radio-label">
+                                            <input type="radio" name="psd-data-scope"> 个人PSD文件
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>计算结果</td>
+                                    <td>
+                                        <label class="radio-label">
+                                            <input type="radio" name="result-data-scope" checked> 所有计算结果
+                                        </label><br>
+                                        <label class="radio-label">
+                                            <input type="radio" name="result-data-scope"> 部门计算结果
+                                        </label><br>
+                                        <label class="radio-label">
+                                            <input type="radio" name="result-data-scope"> 个人计算结果
+                                        </label>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <div class="permission-footer">
+                                <div class="footer-info">
+                                    数据范围: <span class="footer-value">全部数据</span>
+                                </div>
+                                <button class="btn-primary">
+                                    <span class="btn-icon">💾</span>
+                                    <span>保存数据权限</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <div>
+            <span class="status-item">数据库已连接</span>
+            <span class="status-item">用户数: 6</span>
+            <span class="status-item">角色数: 6</span>
+        </div>
+        <div>
+            <span class="status-item">材质管理器系统 v1.2.0</span>
+        </div>
+    </div>
+</body>
+</html>

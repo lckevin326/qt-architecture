@@ -1,103 +1,115 @@
-import Image from "next/image";
+'use client';
+
+import MainLayout from '@/components/layout/MainLayout';
+import { useRouter } from 'next/navigation';
+import styles from './page.module.css';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const router = useRouter();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const quickAccessItems = [
+    {
+      icon: '📋',
+      title: '基础材质管理',
+      description: '管理基础材质的属性、光谱数据等信息',
+      path: '/material/basic'
+    },
+    {
+      icon: '🔄',
+      title: '复合材质管理',
+      description: '创建和管理由多种基础材质组成的复合材质',
+      path: '/material/composite'
+    },
+    {
+      icon: '📊',
+      title: '光谱数据',
+      description: '查看和分析材质的光谱数据和相关参数',
+      path: '/spectral'
+    },
+    {
+      icon: '🖼️',
+      title: 'PSD处理',
+      description: '处理PSD文件并关联材质属性',
+      path: '/psd/list'  // 修改这里的路径
+    }
+  ];
+
+  const recentItems = [
+    {
+      icon: '📄',
+      name: '铝合金A7075',
+      type: '基础材质',
+      time: '2024-01-15 10:30',
+      path: '/material/basic/1'
+    },
+    {
+      icon: '📄',
+      name: '复合涂层-X1',
+      type: '复合材质',
+      time: '2024-01-14 16:45',
+      path: '/material/composite/1'
+    },
+    {
+      icon: '📊',
+      name: '光谱数据分析报告',
+      type: '光谱数据',
+      time: '2024-01-14 15:20',
+      path: '/spectral/1'
+    }
+  ];
+
+  return (
+    <MainLayout>
+      <div className={styles.container}>
+        {/* 欢迎区域 */}
+        <div className={styles.welcomeSection}>
+          <h1 className={styles.welcomeTitle}>欢迎使用材质管理器系统</h1>
+          <p className={styles.welcomeDesc}>
+            这是一个基于QT风格设计的材质管理系统，用于管理材质属性、光谱数据和PSD处理等功能。
+            选择下方快速访问卡片开始使用系统的核心功能。
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* 快速访问区域 */}
+        <div className={styles.quickAccessGrid}>
+          {quickAccessItems.map((item, index) => (
+            <div
+              key={index}
+              className={styles.quickAccessCard}
+              onClick={() => router.push(item.path)}
+            >
+              <div className={styles.cardIcon}>{item.icon}</div>
+              <h3 className={styles.cardTitle}>{item.title}</h3>
+              <p className={styles.cardDesc}>{item.description}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* 最近活动区域 */}
+        <div className={styles.recentSection}>
+          <h2 className={styles.sectionTitle}>最近活动</h2>
+          <div className={styles.recentList}>
+            {recentItems.map((item, index) => (
+              <div
+                key={index}
+                className={styles.recentItem}
+                onClick={() => router.push(item.path)}
+              >
+                <span className={styles.recentIcon}>{item.icon}</span>
+                <div className={styles.recentInfo}>
+                  <div className={styles.recentName}>{item.name}</div>
+                  <div className={styles.recentMeta}>{item.type}</div>
+                </div>
+                <div className={styles.recentTime}>{item.time}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </MainLayout>
   );
 }
+
+
+
+

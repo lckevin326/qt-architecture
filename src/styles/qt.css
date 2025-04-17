@@ -1,0 +1,23 @@
+/* 全局 QT 变量 */
+:root {
+  --qt-bg-color: #f5f5f5;
+  --qt-control-bg: #ffffff;
+  --qt-highlight-color: #0078d7;
+  /* ... 其他变量 */
+}
+
+/* 可复用的 QT 组件样式 */
+.qtButton {
+  background-color: var(--qt-control-bg);
+  border: 1px solid var(--qt-border-color);
+  border-radius: 2px;
+  padding: 4px 8px;
+}
+
+.qtInput {
+  border: 1px solid var(--qt-border-color);
+  padding: 4px;
+  font-size: 13px;
+}
+
+/* ... 其他组件样式 */
