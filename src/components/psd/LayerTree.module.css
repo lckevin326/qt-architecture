@@ -1,0 +1,50 @@
+.layerTree {
+  font-size: 12px;
+}
+
+.layerItem {
+  margin: 2px 0;
+}
+
+.layerHeader {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.layerHeader:hover {
+  background-color: #f0f0f0;
+}
+
+.layerHeader.selected {
+  background-color: #e6f7ff;
+}
+
+.expandIcon {
+  font-size: 10px;
+  margin-right: 4px;
+  cursor: pointer;
+}
+
+.typeIcon {
+  margin-right: 6px;
+}
+
+.layerName {
+  flex: 1;
+}
+
+.visibilityIcon {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.visibilityIcon:hover {
+  opacity: 1;
+}
+
+.children {
+  margin-left: 4px;
+}

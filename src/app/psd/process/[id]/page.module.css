@@ -1,0 +1,319 @@
+.container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 24px;
+  margin: 0;
+}
+
+.breadcrumb {
+  font-size: 12px;
+  color: #666;
+}
+
+.separator {
+  margin: 0 8px;
+  color: #999;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid var(--qt-border-color);
+  border-radius: 4px;
+  background-color: var(--qt-control-bg);
+  color: var(--qt-text-color);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.button:hover {
+  background-color: var(--qt-control-hover-bg);
+}
+
+.button span {
+  display: inline-flex;
+  align-items: center;
+}
+
+.buttonPrimary {
+  composes: button;
+  background-color: var(--qt-primary-color);
+  color: white;
+  border-color: var(--qt-primary-color);
+}
+
+.buttonPrimary:hover {
+  background-color: var(--qt-primary-hover-color);
+}
+
+.infoPanel {
+  background: #f5f5f5;
+  border: 1px solid #e8e8e8;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 2px;
+}
+
+.infoTitle {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.infoContent {
+  font-size: 12px;
+  color: #666;
+}
+
+.workspace {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.layersPanel, .previewPanel, .materialPanel {
+  border: 1px solid #e8e8e8;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+}
+
+.layersPanel {
+  width: 250px;
+}
+
+.previewPanel {
+  flex: 1;
+}
+
+.materialPanel {
+  width: 300px;
+}
+
+.panelHeader {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e8e8e8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafafa;
+}
+
+.panelActions {
+  display: flex;
+  gap: 4px;
+}
+
+.iconButton {
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.layersList, .previewContent, .materialContent {
+  flex: 1;
+  overflow: auto;
+  padding: 12px;
+}
+
+.previewPlaceholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  color: #999;
+}
+
+.materialForm {
+  margin-bottom: 20px;
+}
+
+.formGroup {
+  margin-bottom: 12px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.select {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+}
+
+.selectedLayer {
+  padding: 6px;
+  background: #f5f5f5;
+  border: 1px solid #e8e8e8;
+  border-radius: 2px;
+}
+
+.materialInfo {
+  margin-bottom: 20px;
+}
+
+.materialInfo h3 {
+  font-size: 14px;
+  margin: 0 0 12px 0;
+}
+
+.compositionList {
+  margin-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 12px;
+}
+
+.compositionList label {
+  display: block;
+  margin-bottom: 8px;
+  color: #666;
+}
+
+.compositionItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: #f9f9f9;
+  margin-bottom: 4px;
+  border-radius: 2px;
+  font-size: 12px;
+}
+
+.infoGrid {
+  display: grid;
+  gap: 8px;
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.infoItem label {
+  color: #666;
+}
+
+.infoItem span {
+  color: #333;
+  font-weight: 500;
+}
+
+.processLog {
+  border-top: 1px solid #e8e8e8;
+  padding-top: 16px;
+}
+
+.processLog h3 {
+  font-size: 14px;
+  margin: 0 0 12px 0;
+}
+
+.logContent {
+  font-size: 12px;
+}
+
+.logItem {
+  margin-bottom: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.logTime {
+  color: #999;
+}
+
+.logMessage {
+  color: #666;
+}
+
+/* 图层关联状态标记 */
+.layerStatus {
+  margin-left: auto;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 11px;
+}
+
+.layerLinked {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.layerUnlinked {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+}
+
+/* 图层统计信息 */
+.layerStats {
+  padding: 8px 12px;
+  background: #fafafa;
+  border-top: 1px solid #e8e8e8;
+  font-size: 12px;
+  color: #666;
+}
+
+.statItem {
+  display: inline-block;
+  margin-right: 16px;
+}
+
+.statValue {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+/* 确认关联按钮 */
+.confirmButton {
+  width: 100%;
+  padding: 8px 12px;
+  background: #52c41a;
+  color: white;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+.confirmButton:hover {
+  background: #389e0d;
+}
+
+
