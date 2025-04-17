@@ -48,6 +48,16 @@ export default function PSDProcessPage({ params }: { params: { id: string } }) {
   const [selectedLayer, setSelectedLayer] = useState<number | null>(null);
   const [selectedMaterialType, setSelectedMaterialType] = useState<'basic' | 'composite'>('basic');
   const [selectedMaterial, setSelectedMaterial] = useState<number | null>(null);
+  
+  // 添加编辑状态
+  const [editingMaterial, setEditingMaterial] = useState({
+    name: '',
+    temperature: 298,
+    emissivity: 0.85,
+    modulationFactor: 0.92,
+    spectralData: false,
+    composition: [] as { materialId: number; name: string; percentage: number }[]
+  });
 
   const handleBackToList = () => {
     router.push('/psd/list');
@@ -58,33 +68,80 @@ export default function PSDProcessPage({ params }: { params: { id: string } }) {
     setSelectedMaterial(null);
   };
 
+  // 处理材质选择变化
+  const handleMaterialSelect = (materialId: number) => {
+    setSelectedMaterial(materialId);
+    const material = MOCK_MATERIALS.find(m => m.id === materialId);
+    if (material) {
+      setEditingMaterial({
+        name: material.name,
+        temperature: material.temperature,
+        emissivity: material.emissivity,
+        modulationFactor: material.modulationFactor || 0.92,
+        spectralData: material.spectralData || false,
+        composition: material.composition || []
+      });
+    }
+  };
+
   const getMaterialInfo = () => {
     if (!selectedMaterial) return null;
-    const material = MOCK_MATERIALS.find(m => m.id === selectedMaterial);
-    if (!material) return null;
 
-    if (material.type === 'basic') {
+    if (selectedMaterialType === 'basic') {
       return (
         <>
           <div className={styles.infoItem}>
-            <label>材质类型</label>
-            <span>基础材质</span>
+            <label>材质名称</label>
+            <input
+              type="text"
+              className={styles.formInput}
+              value={editingMaterial.name}
+              onChange={(e) => setEditingMaterial({...editingMaterial, name: e.target.value})}
+            />
           </div>
           <div className={styles.infoItem}>
-            <label>平均温度</label>
-            <span>{material.temperature}K</span>
+            <label>平均温度 (K)</label>
+            <input
+              type="number"
+              className={styles.formInput}
+              value={editingMaterial.temperature}
+              onChange={(e) => setEditingMaterial({...editingMaterial, temperature: Number(e.target.value)})}
+            />
           </div>
           <div className={styles.infoItem}>
             <label>总发射率</label>
-            <span>{material.emissivity}</span>
+            <input
+              type="number"
+              className={styles.formInput}
+              min="0"
+              max="1"
+              step="0.01"
+              value={editingMaterial.emissivity}
+              onChange={(e) => setEditingMaterial({...editingMaterial, emissivity: Number(e.target.value)})}
+            />
           </div>
           <div className={styles.infoItem}>
             <label>调制因子</label>
-            <span>{material.modulationFactor}</span>
+            <input
+              type="number"
+              className={styles.formInput}
+              min="0"
+              max="1"
+              step="0.01"
+              value={editingMaterial.modulationFactor}
+              onChange={(e) => setEditingMaterial({...editingMaterial, modulationFactor: Number(e.target.value)})}
+            />
           </div>
           <div className={styles.infoItem}>
             <label>光谱数据</label>
-            <span>{material.spectralData ? '已配置' : '未配置'}</span>
+            <select 
+              className={styles.formSelect}
+              value={editingMaterial.spectralData ? "1" : "0"}
+              onChange={(e) => setEditingMaterial({...editingMaterial, spectralData: e.target.value === "1"})}
+            >
+              <option value="1">已配置</option>
+              <option value="0">未配置</option>
+            </select>
           </div>
         </>
       );
@@ -92,21 +149,74 @@ export default function PSDProcessPage({ params }: { params: { id: string } }) {
       return (
         <>
           <div className={styles.infoItem}>
-            <label>材质类型</label>
-            <span>复合材质</span>
+            <label>材质名称</label>
+            <input
+              type="text"
+              className={styles.formInput}
+              value={editingMaterial.name}
+              onChange={(e) => setEditingMaterial({...editingMaterial, name: e.target.value})}
+            />
           </div>
           <div className={styles.infoItem}>
             <label>总发射率</label>
-            <span>{material.emissivity}</span>
+            <input
+              type="number"
+              className={styles.formInput}
+              min="0"
+              max="1"
+              step="0.01"
+              value={editingMaterial.emissivity}
+              onChange={(e) => setEditingMaterial({...editingMaterial, emissivity: Number(e.target.value)})}
+            />
           </div>
           <div className={styles.compositionList}>
             <label>材质组成：</label>
-            {material.composition.map((comp, index) => (
+            {editingMaterial.composition.map((comp, index) => (
               <div key={index} className={styles.compositionItem}>
-                <span>{comp.name}</span>
-                <span>{comp.percentage}%</span>
+                <input
+                  type="text"
+                  className={styles.formInput}
+                  value={comp.name}
+                  onChange={(e) => {
+                    const newComposition = [...editingMaterial.composition];
+                    newComposition[index].name = e.target.value;
+                    setEditingMaterial({...editingMaterial, composition: newComposition});
+                  }}
+                />
+                <input
+                  type="number"
+                  className={styles.formInput}
+                  min="0"
+                  max="100"
+                  value={comp.percentage}
+                  onChange={(e) => {
+                    const newComposition = [...editingMaterial.composition];
+                    newComposition[index].percentage = Number(e.target.value);
+                    setEditingMaterial({...editingMaterial, composition: newComposition});
+                  }}
+                />
+                <button 
+                  className={styles.deleteButton}
+                  onClick={() => {
+                    const newComposition = editingMaterial.composition.filter((_, i) => i !== index);
+                    setEditingMaterial({...editingMaterial, composition: newComposition});
+                  }}
+                >
+                  🗑️
+                </button>
               </div>
             ))}
+            <button 
+              className={styles.addButton}
+              onClick={() => {
+                setEditingMaterial({
+                  ...editingMaterial,
+                  composition: [...editingMaterial.composition, { materialId: 0, name: '', percentage: 0 }]
+                });
+              }}
+            >
+              + 添加材质
+            </button>
           </div>
         </>
       );
@@ -252,7 +362,7 @@ export default function PSDProcessPage({ params }: { params: { id: string } }) {
                 <select 
                   className={styles.select}
                   value={selectedMaterial || ''}
-                  onChange={(e) => setSelectedMaterial(Number(e.target.value))}
+                  onChange={(e) => handleMaterialSelect(Number(e.target.value))}
                 >
                   <option value="">请选择材质</option>
                   {MOCK_MATERIALS
@@ -292,6 +402,7 @@ export default function PSDProcessPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+
 
 
 

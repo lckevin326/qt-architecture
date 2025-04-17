@@ -203,13 +203,11 @@
 }
 
 .compositionItem {
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 8px;
-  background: #f9f9f9;
-  margin-bottom: 4px;
-  border-radius: 2px;
-  font-size: 12px;
+  display: grid;
+  grid-template-columns: 1fr 80px 30px;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .infoGrid {
@@ -223,11 +221,15 @@
 .infoItem {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
 }
 
 .infoItem label {
+  min-width: 80px;
   color: #666;
+  font-size: 12px;
 }
 
 .infoItem span {
@@ -315,5 +317,47 @@
 .confirmButton:hover {
   background: #389e0d;
 }
+
+.formInput {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  font-size: 12px;
+}
+
+.formSelect {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  font-size: 12px;
+}
+
+.deleteButton {
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addButton {
+  width: 100%;
+  padding: 6px;
+  background: #f0f0f0;
+  border: 1px dashed #ddd;
+  border-radius: 2px;
+  cursor: pointer;
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.addButton:hover {
+  background: #e8e8e8;
+}
+
 
 
