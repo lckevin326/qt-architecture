@@ -4,52 +4,59 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './SpectralDataClient.module.css';
 
+// 首先定义一个 Material 类型接口
+interface Material {
+  id: string;
+  name: string;
+  // 添加其他必要的属性
+}
+
 // 静态材质列表数据
-const MATERIALS = [
+const MATERIALS: Material[] = [
   {
-    id: 1,
+    id: '1',
     name: '铝合金A7075',
     type: '基础材质',
     dataPoints: 12
   },
   {
-    id: 2,
+    id: '2',
     name: '石墨纤维',
     type: '基础材质',
     dataPoints: 18
   },
   {
-    id: 3,
+    id: '3',
     name: '混凝土C30',
     type: '基础材质',
     dataPoints: 15
   },
   {
-    id: 4,
+    id: '4',
     name: '玻璃纤维',
     type: '基础材质',
     dataPoints: 20
   },
   {
-    id: 5,
+    id: '5',
     name: '聚四氟乙烯',
     type: '基础材质',
     dataPoints: 16
   },
   {
-    id: 6,
+    id: '6',
     name: '不锈钢316L',
     type: '基础材质',
     dataPoints: 14
   },
   {
-    id: 7,
+    id: '7',
     name: '钛合金TC4',
     type: '基础材质',
     dataPoints: 12
   },
   {
-    id: 8,
+    id: '8',
     name: '碳纤维复合板',
     type: '复合材质',
     dataPoints: 'calculated'
@@ -71,7 +78,7 @@ export default function SpectralDataClient() {
   ]);
 
   // 处理材质选择
-  const handleMaterialSelect = (material) => {
+  const handleMaterialSelect = (material: any) => {
     setSelectedMaterial(material);
   };
 
@@ -259,4 +266,6 @@ export default function SpectralDataClient() {
     </div>
   );
 }
+
+
 
