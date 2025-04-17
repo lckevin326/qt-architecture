@@ -36,7 +36,6 @@ const LayerTreeItem = ({
         className={`${styles.layerHeader} ${selectedLayer === layer.id ? styles.selected : ''}`}
         onClick={() => onSelectLayer(layer.id)}
       >
-        {/* 展开/折叠图标 */}
         {hasChildren && (
           <span 
             className={styles.expandIcon}
@@ -49,21 +48,17 @@ const LayerTreeItem = ({
           </span>
         )}
         
-        {/* 图层类型图标 */}
         <span className={styles.typeIcon}>
           {layer.type === 'group' ? '📁' : 
            layer.type === 'background' ? '🖼️' : '📄'}
         </span>
 
-        {/* 图层名称 */}
         <span className={styles.layerName}>{layer.name}</span>
 
-        {/* 可见性切换 */}
         <span className={styles.visibilityIcon}>
           {layer.visible ? '👁️' : '👁️‍🗨️'}
         </span>
 
-        {/* 添加关联状态标记 */}
         <span className={`${styles.layerStatus} ${
           layer.linked ? styles.layerLinked : styles.layerUnlinked
         }`}>
@@ -71,8 +66,7 @@ const LayerTreeItem = ({
         </span>
       </div>
 
-      {/* 子图层 */}
-      {hasChildren && expanded && (
+      {hasChildren && expanded && layer.children && (
         <div className={styles.children}>
           {layer.children.map(child => (
             <LayerTreeItem 
@@ -103,3 +97,4 @@ export default function LayerTree({ layers, selectedLayer, onSelectLayer }: Laye
     </div>
   );
 }
+
