@@ -8,7 +8,8 @@ import styles from './SpectralDataClient.module.css';
 interface Material {
   id: string;
   name: string;
-  // 添加其他必要的属性
+  type: string;
+  dataPoints: number | 'calculated';  // 可以是数字或字符串 'calculated'
 }
 
 // 静态材质列表数据
